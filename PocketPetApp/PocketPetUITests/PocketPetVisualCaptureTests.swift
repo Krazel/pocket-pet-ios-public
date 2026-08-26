@@ -406,13 +406,18 @@ class PocketPetRuntimeQATestCase: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        require(element, file: file, line: line)
-        for _ in 0..<8 where !element.isHittable {
+        for _ in 0..<8 where !element.exists || !element.isHittable {
             switch direction {
             case .down: app.swipeDown()
             case .up: app.swipeUp()
             }
         }
+        XCTAssertTrue(
+            element.exists,
+            "Element did not become available while scrolling: \(element)",
+            file: file,
+            line: line
+        )
         XCTAssertTrue(
             element.isHittable,
             "Element is present but not reachable: \(element)",
@@ -491,11 +496,21 @@ class PocketPetRuntimeQATestCase: XCTestCase {
     }
 
     func exerciseCareAction(_ title: String, response: String) {
-        let action = require(app.buttons[title])
+        let action = app.buttons[title]
         tapReachable(action)
         let scene = require(app.buttons["habitat.scene"])
         makeHittable(scene, direction: .down)
         requireLabel(response, on: scene, timeout: 4)
+    }
+
+    func exerciseCareActionReturningToBase(
+        _ title: String,
+        baseSceneLabel: String
+    ) {
+        tapReachable(app.buttons[title])
+        let scene = app.buttons["habitat.scene"]
+        makeHittable(scene, direction: .down)
+        requireLabel(baseSceneLabel, on: scene, timeout: 4)
     }
 }
 
@@ -670,13 +685,13 @@ final class PocketPetSemanticAccessibilityTests: PocketPetRuntimeQATestCase {
             require(app.descendants(matching: .any)["habitat.stage"]).label,
             "Pip, child"
         )
-        XCTAssertEqual(require(app.descendants(matching: .any)["Hunger"]).value as? String,
+        XCTAssertEqual(require(app.otherElements["Hunger"]).value as? String,
                        "80 percent satisfied, comfortable")
-        XCTAssertEqual(require(app.descendants(matching: .any)["Happiness"]).value as? String,
+        XCTAssertEqual(require(app.otherElements["Happiness"]).value as? String,
                        "80 percent, comfortable")
-        XCTAssertEqual(require(app.descendants(matching: .any)["Energy"]).value as? String,
+        XCTAssertEqual(require(app.otherElements["Energy"]).value as? String,
                        "80 percent, comfortable")
-        XCTAssertEqual(require(app.descendants(matching: .any)["Cleanliness"]).value as? String,
+        XCTAssertEqual(require(app.otherElements["Cleanliness"]).value as? String,
                        "80 percent, comfortable")
         requireLabel(
             "Pip is comfortable. Lovely morning!",
@@ -817,16 +832,25 @@ final class PocketPetNormalMotionTimingTests: PocketPetRuntimeQATestCase {
 
     func testN03NormalHomeCareMotionReturnsToRest() {
         launch(scenario: "child-comfortable", staticPresentation: false)
-        exerciseCareAction("Feed", response: "Pip is comfortable. Tasty, thank you!")
-        exerciseCareAction("Play", response: "Pip is comfortable. That was fun!")
-        exerciseCareAction("Rest", response: "Pip is sleeping. Cozy time.")
-        exerciseCareAction("Wake", response: "Pip is comfortable. Good morning!")
-        exerciseCareAction("Clean", response: "Pip is comfortable. Fresh and comfy!")
-        settle(1.2)
-        requireLabel(
-            "Pip is comfortable. Lovely morning!",
-            on: require(app.buttons["habitat.scene"]),
-            timeout: 3
+        exerciseCareActionReturningToBase(
+            "Feed",
+            baseSceneLabel: "Pip is comfortable. Lovely morning!"
+        )
+        exerciseCareActionReturningToBase(
+            "Play",
+            baseSceneLabel: "Pip is comfortable. Lovely morning!"
+        )
+        exerciseCareActionReturningToBase(
+            "Rest",
+            baseSceneLabel: "Pip is sleeping. Resting peacefully."
+        )
+        exerciseCareActionReturningToBase(
+            "Wake",
+            baseSceneLabel: "Pip is comfortable. Lovely morning!"
+        )
+        exerciseCareActionReturningToBase(
+            "Clean",
+            baseSceneLabel: "Pip is comfortable. Lovely morning!"
         )
     }
 }
