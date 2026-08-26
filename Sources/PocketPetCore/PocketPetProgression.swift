@@ -409,7 +409,7 @@ public enum PetSpaceID: String, Codable, CaseIterable, Sendable {
 public struct PocketPetGameState: Codable, Equatable, Sendable {
     public static let currentSchemaVersion = 1
 
-    public let schemaVersion: Int
+    public let gameSchemaVersion: Int
     public var pet: PetState
     public var progression: BondProgression
     public var wallet: SunSeedWallet
@@ -426,9 +426,9 @@ public struct PocketPetGameState: Codable, Equatable, Sendable {
         vitals: CompanionVitals,
         location: PetSpaceID = .sunnyPatio,
         highScores: [String: Int] = [:],
-        schemaVersion: Int = PocketPetGameState.currentSchemaVersion
+        gameSchemaVersion: Int = PocketPetGameState.currentSchemaVersion
     ) {
-        self.schemaVersion = schemaVersion
+        self.gameSchemaVersion = gameSchemaVersion
         self.pet = pet
         self.progression = progression
         self.wallet = wallet
