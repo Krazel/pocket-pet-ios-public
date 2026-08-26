@@ -785,7 +785,7 @@ final class PocketPetReduceMotionTests: PocketPetRuntimeQATestCase {
         launch(
             scenario: "settings-off",
             staticPresentation: false,
-            extraArguments: ["--runtime-qa-system-reduce-motion"]
+            extraArguments: ["--runtime-qa-local-reduce-motion"]
         )
         tapReachable(require(app.buttons["Privacy"]))
         require(app.staticTexts["Your pocket, your data."])

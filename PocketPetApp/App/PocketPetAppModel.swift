@@ -767,7 +767,10 @@ final class PocketPetAppModel: ObservableObject {
         reminderInvitationIsEligible = snapshot.reminderInvitationIsEligible
         prefersReducedMotion = snapshot.preferences.reduceMotionEnabled
         #if DEBUG
-        if usesStaticVisualCapture {
+        if usesStaticVisualCapture
+            || ProcessInfo.processInfo.arguments.contains(
+                "--runtime-qa-system-reduce-motion"
+            ) {
             // Keeps screenshot frames deterministic without changing the
             // persisted Reduce Motion preference shown in Settings.
             prefersReducedMotion = true

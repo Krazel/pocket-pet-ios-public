@@ -68,12 +68,14 @@ Application Support save. Release excludes the parser, fixtures, fake scheduler
 and fixed clock with `#if DEBUG`; launch arguments have no product behavior.
 
 The separate opt-in runtime QA suite uses three additional Debug-only controls:
-`--runtime-qa-system-reduce-motion` injects the same SwiftUI environment value
-that the system setting supplies, `--runtime-qa-local-reduce-motion` persists
-the app's own preference in the isolated fixture, and
+`--runtime-qa-system-reduce-motion` forces the app's effective reduced-motion
+input while leaving its local preference off,
+`--runtime-qa-local-reduce-motion` persists the app's own preference in the
+isolated fixture, and
 `--runtime-qa-extended-reactions` keeps response copy observable for UI
-assertions. None exists in Release. The environment injection verifies app
-response to the value but does not replace the real system-toggle smoke below.
+assertions. None exists in Release. The effective-input fixture verifies app
+response to reduced motion but does not replace the real system-toggle smoke
+below.
 
 F01–F05 and F07–F10 start directly from the matching scenario. For F06, start
 `child-comfortable` and tap the real Feed control. For F11–F17, start from the
