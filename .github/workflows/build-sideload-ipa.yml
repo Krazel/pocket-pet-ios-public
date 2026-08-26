@@ -1,0 +1,30 @@
+name: Build Pocket Pet sideload IPA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pocket-pet-sideload-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 25
+    steps:
+      - name: Check out candidate
+        uses: actions/checkout@v5
+
+      - name: Build unsigned iPhone IPA
+        run: bash scripts/build-sideload-ipa.sh
+
+      - name: Preserve sideload package
+        uses: actions/upload-artifact@v6
+        with:
+          name: PocketPet-sideload-${{ github.sha }}
+          path: .verification-output/*/sideload/
+          if-no-files-found: error
+          retention-days: 14
