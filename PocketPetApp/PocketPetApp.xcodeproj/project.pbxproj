@@ -1,0 +1,660 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		010000000000000000000001 /* PocketPetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000001 /* PocketPetApp.swift */; };
+		010000000000000000000002 /* PocketPetAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000002 /* PocketPetAppModel.swift */; };
+		010000000000000000000003 /* PocketPetColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000003 /* PocketPetColors.swift */; };
+		010000000000000000000004 /* HabitatViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000004 /* HabitatViewState.swift */; };
+		010000000000000000000005 /* PocketPetIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000005 /* PocketPetIcon.swift */; };
+		010000000000000000000006 /* NeedCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000006 /* NeedCard.swift */; };
+		010000000000000000000007 /* CareActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000007 /* CareActionButton.swift */; };
+		010000000000000000000008 /* SunnyPatioScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000008 /* SunnyPatioScene.swift */; };
+		010000000000000000000009 /* HabitatSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000009 /* HabitatSceneView.swift */; };
+		01000000000000000000000A /* HabitatHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000A /* HabitatHomeView.swift */; };
+		01000000000000000000000B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000B /* Assets.xcassets */; };
+		01000000000000000000000C /* sunny_patio_environment.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000C /* sunny_patio_environment.png */; };
+		01000000000000000000000D /* spriglet_child.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000000D /* spriglet_child.png */; };
+		01000000000000000000000F /* PocketPetCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0C0000000000000000000002 /* PocketPetCore */; };
+		010000000000000000000010 /* icon_heart.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000010 /* icon_heart.png */; };
+		010000000000000000000013 /* icon_ball.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000013 /* icon_ball.png */; };
+		010000000000000000000015 /* WelcomeEggView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000015 /* WelcomeEggView.swift */; };
+		010000000000000000000016 /* HatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000016 /* HatchingView.swift */; };
+		010000000000000000000017 /* seed_nest_welcome_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000017 /* seed_nest_welcome_background.png */; };
+		010000000000000000000018 /* seed_nest_closed_hero.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000018 /* seed_nest_closed_hero.png */; };
+		010000000000000000000019 /* seed_nest_open_hero.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000019 /* seed_nest_open_hero.png */; };
+		01000000000000000000001A /* LocalReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001A /* LocalReminderScheduler.swift */; };
+		01000000000000000000001B /* GardenComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001B /* GardenComponents.swift */; };
+		01000000000000000000001C /* SettingsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001C /* SettingsRootView.swift */; };
+		01000000000000000000001D /* SettingsSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001D /* SettingsSheets.swift */; };
+		01000000000000000000001E /* ReminderSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001E /* ReminderSettingsView.swift */; };
+		01000000000000000000001F /* PrivacySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000001F /* PrivacySettingsView.swift */; };
+		010000000000000000000020 /* settings_title_leaf.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000020 /* settings_title_leaf.png */; };
+		010000000000000000000021 /* settings_reminder_invitation_bell.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000021 /* settings_reminder_invitation_bell.png */; };
+		010000000000000000000022 /* settings_reminder_enabled_bell.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000022 /* settings_reminder_enabled_bell.png */; };
+		010000000000000000000023 /* settings_reminder_muted_bell.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000023 /* settings_reminder_muted_bell.png */; };
+		010000000000000000000024 /* settings_support_heart.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000024 /* settings_support_heart.png */; };
+		010000000000000000000025 /* settings_privacy_shield.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000025 /* settings_privacy_shield.png */; };
+		010000000000000000000026 /* settings_support_envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000026 /* settings_support_envelope.png */; };
+		010000000000000000000027 /* AdultEvolutionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000027 /* AdultEvolutionView.swift */; };
+		010000000000000000000028 /* spriglet_child_sleeping.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000028 /* spriglet_child_sleeping.png */; };
+		010000000000000000000029 /* spriglet_child_needs_care.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000029 /* spriglet_child_needs_care.png */; };
+		01000000000000000000002A /* spriglet_child_feed.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002A /* spriglet_child_feed.png */; };
+		01000000000000000000002B /* spriglet_adult_needs_care.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002B /* spriglet_adult_needs_care.png */; };
+		01000000000000000000002C /* spriglet_adult_neutral.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002C /* spriglet_adult_neutral.png */; };
+		01000000000000000000002D /* spriglet_adult_sleeping.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002D /* spriglet_adult_sleeping.png */; };
+		01000000000000000000002E /* icon_stage_child.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002E /* icon_stage_child.png */; };
+		01000000000000000000002F /* icon_stage_adult.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002F /* icon_stage_adult.png */; };
+		010000000000000000000030 /* PocketPetVisualCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000030 /* PocketPetVisualCaptureTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0D0000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 060000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 050000000000000000000001;
+			remoteInfo = PocketPetApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		020000000000000000000001 /* PocketPetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketPetApp.swift; sourceTree = "<group>"; };
+		020000000000000000000002 /* PocketPetAppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketPetAppModel.swift; sourceTree = "<group>"; };
+		020000000000000000000003 /* PocketPetColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketPetColors.swift; sourceTree = "<group>"; };
+		020000000000000000000004 /* HabitatViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitatViewState.swift; sourceTree = "<group>"; };
+		020000000000000000000005 /* PocketPetIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketPetIcon.swift; sourceTree = "<group>"; };
+		020000000000000000000006 /* NeedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeedCard.swift; sourceTree = "<group>"; };
+		020000000000000000000007 /* CareActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareActionButton.swift; sourceTree = "<group>"; };
+		020000000000000000000008 /* SunnyPatioScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunnyPatioScene.swift; sourceTree = "<group>"; };
+		020000000000000000000009 /* HabitatSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitatSceneView.swift; sourceTree = "<group>"; };
+		02000000000000000000000A /* HabitatHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitatHomeView.swift; sourceTree = "<group>"; };
+		02000000000000000000000B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		02000000000000000000000C /* sunny_patio_environment.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sunny_patio_environment.png; sourceTree = "<group>"; };
+		02000000000000000000000D /* spriglet_child.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spriglet_child.png; sourceTree = "<group>"; };
+		02000000000000000000000F /* PocketPetApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PocketPetApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		020000000000000000000010 /* icon_heart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_heart.png; sourceTree = "<group>"; };
+		020000000000000000000013 /* icon_ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_ball.png; sourceTree = "<group>"; };
+		020000000000000000000015 /* WelcomeEggView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeEggView.swift; sourceTree = "<group>"; };
+		020000000000000000000016 /* HatchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HatchingView.swift; sourceTree = "<group>"; };
+		020000000000000000000017 /* seed_nest_welcome_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = seed_nest_welcome_background.png; sourceTree = "<group>"; };
+		020000000000000000000018 /* seed_nest_closed_hero.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = seed_nest_closed_hero.png; sourceTree = "<group>"; };
+		020000000000000000000019 /* seed_nest_open_hero.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = seed_nest_open_hero.png; sourceTree = "<group>"; };
+		02000000000000000000001A /* LocalReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalReminderScheduler.swift; sourceTree = "<group>"; };
+		02000000000000000000001B /* GardenComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GardenComponents.swift; sourceTree = "<group>"; };
+		02000000000000000000001C /* SettingsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRootView.swift; sourceTree = "<group>"; };
+		02000000000000000000001D /* SettingsSheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheets.swift; sourceTree = "<group>"; };
+		02000000000000000000001E /* ReminderSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSettingsView.swift; sourceTree = "<group>"; };
+		02000000000000000000001F /* PrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacySettingsView.swift; sourceTree = "<group>"; };
+		020000000000000000000020 /* settings_title_leaf.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings_title_leaf.png; sourceTree = "<group>"; };
+		020000000000000000000021 /* settings_reminder_invitation_bell.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings_reminder_invitation_bell.png; sourceTree = "<group>"; };
+		020000000000000000000022 /* settings_reminder_enabled_bell.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings_reminder_enabled_bell.png; sourceTree = "<group>"; };
+		020000000000000000000023 /* settings_reminder_muted_bell.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings_reminder_muted_bell.png; sourceTree = "<group>"; };
+		020000000000000000000024 /* settings_support_heart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings_support_heart.png; sourceTree = "<group>"; };
+		020000000000000000000025 /* settings_privacy_shield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings_privacy_shield.png; sourceTree = "<group>"; };
+		020000000000000000000026 /* settings_support_envelope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings_support_envelope.png; sourceTree = "<group>"; };
+		020000000000000000000027 /* AdultEvolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdultEvolutionView.swift; sourceTree = "<group>"; };
+		020000000000000000000028 /* spriglet_child_sleeping.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spriglet_child_sleeping.png; sourceTree = "<group>"; };
+		020000000000000000000029 /* spriglet_child_needs_care.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spriglet_child_needs_care.png; sourceTree = "<group>"; };
+		02000000000000000000002A /* spriglet_child_feed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spriglet_child_feed.png; sourceTree = "<group>"; };
+		02000000000000000000002B /* spriglet_adult_needs_care.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spriglet_adult_needs_care.png; sourceTree = "<group>"; };
+		02000000000000000000002C /* spriglet_adult_neutral.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spriglet_adult_neutral.png; sourceTree = "<group>"; };
+		02000000000000000000002D /* spriglet_adult_sleeping.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spriglet_adult_sleeping.png; sourceTree = "<group>"; };
+		02000000000000000000002E /* icon_stage_child.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_stage_child.png; sourceTree = "<group>"; };
+		02000000000000000000002F /* icon_stage_adult.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_stage_adult.png; sourceTree = "<group>"; };
+		020000000000000000000030 /* PocketPetVisualCaptureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketPetVisualCaptureTests.swift; sourceTree = "<group>"; };
+		020000000000000000000031 /* PocketPetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PocketPetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		030000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01000000000000000000000F /* PocketPetCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		030000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		040000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				040000000000000000000002 /* App */,
+				040000000000000000000003 /* Design */,
+				040000000000000000000004 /* Features */,
+				04000000000000000000000D /* Services */,
+				040000000000000000000006 /* Resources */,
+				040000000000000000000012 /* PocketPetUITests */,
+				040000000000000000000008 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		040000000000000000000002 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000001 /* PocketPetApp.swift */,
+				020000000000000000000002 /* PocketPetAppModel.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		040000000000000000000003 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000003 /* PocketPetColors.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		040000000000000000000004 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				040000000000000000000005 /* Habitat */,
+				040000000000000000000009 /* Onboarding */,
+				04000000000000000000000A /* Milestone */,
+				04000000000000000000000C /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		040000000000000000000005 /* Habitat */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000004 /* HabitatViewState.swift */,
+				020000000000000000000005 /* PocketPetIcon.swift */,
+				020000000000000000000006 /* NeedCard.swift */,
+				020000000000000000000007 /* CareActionButton.swift */,
+				020000000000000000000008 /* SunnyPatioScene.swift */,
+				020000000000000000000009 /* HabitatSceneView.swift */,
+				02000000000000000000000A /* HabitatHomeView.swift */,
+			);
+			path = Habitat;
+			sourceTree = "<group>";
+		};
+		040000000000000000000009 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000015 /* WelcomeEggView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		04000000000000000000000A /* Milestone */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000016 /* HatchingView.swift */,
+				020000000000000000000027 /* AdultEvolutionView.swift */,
+			);
+			path = Milestone;
+			sourceTree = "<group>";
+		};
+		04000000000000000000000C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000001B /* GardenComponents.swift */,
+				02000000000000000000001C /* SettingsRootView.swift */,
+				02000000000000000000001D /* SettingsSheets.swift */,
+				02000000000000000000001E /* ReminderSettingsView.swift */,
+				02000000000000000000001F /* PrivacySettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		04000000000000000000000D /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				04000000000000000000000E /* Notifications */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		04000000000000000000000E /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000001A /* LocalReminderScheduler.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
+		040000000000000000000006 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000000B /* Assets.xcassets */,
+				040000000000000000000007 /* Artwork */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		040000000000000000000007 /* Artwork */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000000C /* sunny_patio_environment.png */,
+				02000000000000000000000D /* spriglet_child.png */,
+				020000000000000000000010 /* icon_heart.png */,
+				020000000000000000000013 /* icon_ball.png */,
+				04000000000000000000000B /* Onboarding */,
+				04000000000000000000000F /* Settings */,
+				040000000000000000000010 /* PetStates */,
+				040000000000000000000011 /* UI */,
+			);
+			path = Artwork;
+			sourceTree = "<group>";
+		};
+		04000000000000000000000B /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000017 /* seed_nest_welcome_background.png */,
+				020000000000000000000018 /* seed_nest_closed_hero.png */,
+				020000000000000000000019 /* seed_nest_open_hero.png */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		04000000000000000000000F /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000020 /* settings_title_leaf.png */,
+				020000000000000000000021 /* settings_reminder_invitation_bell.png */,
+				020000000000000000000022 /* settings_reminder_enabled_bell.png */,
+				020000000000000000000023 /* settings_reminder_muted_bell.png */,
+				020000000000000000000024 /* settings_support_heart.png */,
+				020000000000000000000025 /* settings_privacy_shield.png */,
+				020000000000000000000026 /* settings_support_envelope.png */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		040000000000000000000010 /* PetStates */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000028 /* spriglet_child_sleeping.png */,
+				020000000000000000000029 /* spriglet_child_needs_care.png */,
+				02000000000000000000002A /* spriglet_child_feed.png */,
+				02000000000000000000002B /* spriglet_adult_needs_care.png */,
+				02000000000000000000002C /* spriglet_adult_neutral.png */,
+				02000000000000000000002D /* spriglet_adult_sleeping.png */,
+			);
+			path = PetStates;
+			sourceTree = "<group>";
+		};
+		040000000000000000000011 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000002E /* icon_stage_child.png */,
+				02000000000000000000002F /* icon_stage_adult.png */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		040000000000000000000008 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				02000000000000000000000F /* PocketPetApp.app */,
+				020000000000000000000031 /* PocketPetUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		040000000000000000000012 /* PocketPetUITests */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000030 /* PocketPetVisualCaptureTests.swift */,
+			);
+			path = PocketPetUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		050000000000000000000001 /* PocketPetApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A0000000000000000000002 /* Build configuration list for PBXNativeTarget "PocketPetApp" */;
+			buildPhases = (
+				070000000000000000000001 /* Sources */,
+				030000000000000000000001 /* Frameworks */,
+				080000000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PocketPetApp;
+			packageProductDependencies = (
+				0C0000000000000000000002 /* PocketPetCore */,
+			);
+			productName = PocketPetApp;
+			productReference = 02000000000000000000000F /* PocketPetApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		050000000000000000000002 /* PocketPetUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A0000000000000000000003 /* Build configuration list for PBXNativeTarget "PocketPetUITests" */;
+			buildPhases = (
+				070000000000000000000002 /* Sources */,
+				030000000000000000000002 /* Frameworks */,
+				080000000000000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0E0000000000000000000001 /* PBXTargetDependency */,
+			);
+			name = PocketPetUITests;
+			packageProductDependencies = (
+			);
+			productName = PocketPetUITests;
+			productReference = 020000000000000000000031 /* PocketPetUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		060000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					050000000000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					050000000000000000000002 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = 050000000000000000000001;
+					};
+				};
+			};
+			buildConfigurationList = 0A0000000000000000000001 /* Build configuration list for PBXProject "PocketPetApp" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 040000000000000000000001;
+			packageReferences = (
+				0C0000000000000000000001 /* XCLocalSwiftPackageReference ".." */,
+			);
+			productRefGroup = 040000000000000000000008 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				050000000000000000000001 /* PocketPetApp */,
+				050000000000000000000002 /* PocketPetUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		080000000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01000000000000000000000B /* Assets.xcassets in Resources */,
+				01000000000000000000000C /* sunny_patio_environment.png in Resources */,
+				01000000000000000000000D /* spriglet_child.png in Resources */,
+				010000000000000000000010 /* icon_heart.png in Resources */,
+				010000000000000000000013 /* icon_ball.png in Resources */,
+				010000000000000000000017 /* seed_nest_welcome_background.png in Resources */,
+				010000000000000000000018 /* seed_nest_closed_hero.png in Resources */,
+				010000000000000000000019 /* seed_nest_open_hero.png in Resources */,
+				010000000000000000000020 /* settings_title_leaf.png in Resources */,
+				010000000000000000000021 /* settings_reminder_invitation_bell.png in Resources */,
+				010000000000000000000022 /* settings_reminder_enabled_bell.png in Resources */,
+				010000000000000000000023 /* settings_reminder_muted_bell.png in Resources */,
+				010000000000000000000024 /* settings_support_heart.png in Resources */,
+				010000000000000000000025 /* settings_privacy_shield.png in Resources */,
+				010000000000000000000026 /* settings_support_envelope.png in Resources */,
+				010000000000000000000028 /* spriglet_child_sleeping.png in Resources */,
+				010000000000000000000029 /* spriglet_child_needs_care.png in Resources */,
+				01000000000000000000002A /* spriglet_child_feed.png in Resources */,
+				01000000000000000000002B /* spriglet_adult_needs_care.png in Resources */,
+				01000000000000000000002C /* spriglet_adult_neutral.png in Resources */,
+				01000000000000000000002D /* spriglet_adult_sleeping.png in Resources */,
+				01000000000000000000002E /* icon_stage_child.png in Resources */,
+				01000000000000000000002F /* icon_stage_adult.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		080000000000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		070000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				010000000000000000000001 /* PocketPetApp.swift in Sources */,
+				010000000000000000000002 /* PocketPetAppModel.swift in Sources */,
+				010000000000000000000003 /* PocketPetColors.swift in Sources */,
+				010000000000000000000004 /* HabitatViewState.swift in Sources */,
+				010000000000000000000005 /* PocketPetIcon.swift in Sources */,
+				010000000000000000000006 /* NeedCard.swift in Sources */,
+				010000000000000000000007 /* CareActionButton.swift in Sources */,
+				010000000000000000000008 /* SunnyPatioScene.swift in Sources */,
+				010000000000000000000009 /* HabitatSceneView.swift in Sources */,
+				01000000000000000000000A /* HabitatHomeView.swift in Sources */,
+				010000000000000000000015 /* WelcomeEggView.swift in Sources */,
+				010000000000000000000016 /* HatchingView.swift in Sources */,
+				01000000000000000000001A /* LocalReminderScheduler.swift in Sources */,
+				01000000000000000000001B /* GardenComponents.swift in Sources */,
+				01000000000000000000001C /* SettingsRootView.swift in Sources */,
+				01000000000000000000001D /* SettingsSheets.swift in Sources */,
+				01000000000000000000001E /* ReminderSettingsView.swift in Sources */,
+				01000000000000000000001F /* PrivacySettingsView.swift in Sources */,
+				010000000000000000000027 /* AdultEvolutionView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		070000000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				010000000000000000000030 /* PocketPetVisualCaptureTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		090000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		090000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		090000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Pocket Pet";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.family-games";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.pocketpet;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		090000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Pocket Pet";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.family-games";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.pocketpet;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		090000000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.pocketpet.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = PocketPetApp;
+			};
+			name = Debug;
+		};
+		090000000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.pocketpet.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = PocketPetApp;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0A0000000000000000000001 /* Build configuration list for PBXProject "PocketPetApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				090000000000000000000001 /* Debug */,
+				090000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0A0000000000000000000002 /* Build configuration list for PBXNativeTarget "PocketPetApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				090000000000000000000003 /* Debug */,
+				090000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0A0000000000000000000003 /* Build configuration list for PBXNativeTarget "PocketPetUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				090000000000000000000005 /* Debug */,
+				090000000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		0C0000000000000000000001 /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0C0000000000000000000002 /* PocketPetCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0C0000000000000000000001 /* XCLocalSwiftPackageReference ".." */;
+			productName = PocketPetCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin PBXTargetDependency section */
+		0E0000000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 050000000000000000000001 /* PocketPetApp */;
+			targetProxy = 0D0000000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+	};
+	rootObject = 060000000000000000000001 /* Project object */;
+}

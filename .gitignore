@@ -1,0 +1,46 @@
+# Xcode user state
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+
+# Build products and derived data
+build/
+DerivedData/
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Dependency managers (not currently authorized)
+Pods/
+Carthage/Build/
+
+# Automation output
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+.verification-output/
+.verification-work/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.p8
+*.mobileprovision
+*.cer
+*.p12
+*.key
+*.pem
+secrets/
+
+# macOS and editor noise
+.DS_Store
+.idea/
+.vscode/
+*.swp
