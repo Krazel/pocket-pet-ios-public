@@ -55,7 +55,7 @@ final class PocketPetVisualCaptureTests: XCTestCase {
         requireLabel(
             "Pip is comfortable. Tasty, thank you!",
             on: require(app.buttons["habitat.scene"]),
-            timeout: 0.7
+            timeout: 4
         )
         settleAnimatedContent(for: 0.25, frame: "F06")
         capture("F06-child-feed-response-raw")

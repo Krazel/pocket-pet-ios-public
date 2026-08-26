@@ -58,4 +58,5 @@ xcrun simctl status_bar "$simulator_udid" override \
   --wifiBars 3
 
 export POCKET_PET_UI_DESTINATION="platform=iOS Simulator,id=${simulator_udid}"
+export POCKET_PET_UI_UDID="${simulator_udid}"
 bash scripts/run-visual-captures.sh

@@ -15,6 +15,21 @@ destination="${POCKET_PET_UI_DESTINATION:-platform=iOS Simulator,name=iPhone 16 
 candidate_commit="$(git rev-parse HEAD)"
 mkdir -p "$output_root" "$work_root"
 
+simulator_environment_was_set=false
+cleanup_capture_environment() {
+  if [[ "$simulator_environment_was_set" = true ]]; then
+    xcrun simctl spawn "$POCKET_PET_UI_UDID" launchctl unsetenv \
+      POCKET_PET_CANDIDATE_COMMIT >/dev/null 2>&1 || true
+  fi
+}
+trap cleanup_capture_environment EXIT
+
+if [[ -n "${POCKET_PET_UI_UDID:-}" ]]; then
+  xcrun simctl spawn "$POCKET_PET_UI_UDID" launchctl setenv \
+    POCKET_PET_CANDIDATE_COMMIT "$candidate_commit"
+  simulator_environment_was_set=true
+fi
+
 {
   printf 'Pocket Pet visual capture run\n'
   printf 'UTC: %s\n' "$timestamp"
@@ -26,7 +41,7 @@ mkdir -p "$output_root" "$work_root"
 } | tee "$output_root/environment.txt"
 
 set +e
-POCKET_PET_CANDIDATE_COMMIT="$candidate_commit" NSUnbufferedIO=YES xcodebuild \
+NSUnbufferedIO=YES xcodebuild \
   -project PocketPetApp/PocketPetApp.xcodeproj \
   -scheme PocketPetApp \
   -configuration Debug \

@@ -90,11 +90,21 @@ try {
         "--time '9:41'",
         '--batteryLevel 100',
         'POCKET_PET_UI_DESTINATION',
+        'POCKET_PET_UI_UDID',
         'run-visual-captures.sh',
         'trap cleanup_simulator EXIT'
     )) {
         if (-not $publicVisualGate.Contains($requiredPublicVisualToken)) {
             Fail "public visual gate is missing $requiredPublicVisualToken."
+        }
+    }
+    foreach ($captureEnvironmentToken in @(
+        'launchctl setenv',
+        'launchctl unsetenv',
+        'POCKET_PET_CANDIDATE_COMMIT'
+    )) {
+        if (-not $visualCaptureGate.Contains($captureEnvironmentToken)) {
+            Fail "visual capture gate is missing $captureEnvironmentToken."
         }
     }
 
