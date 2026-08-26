@@ -141,6 +141,165 @@ final class PocketPetProgressionTests: XCTestCase {
         XCTAssertEqual(decoded, original)
     }
 
+    func testFoodConsumptionIsAtomicAndReplaySafe() throws {
+        let state = PocketPetGameState(migrating: makeChild())
+        let engine = PocketPetGameEngine()
+        let commandID = UUID(
+            uuidString: "33333333-3333-3333-3333-333333333333"
+        )!
+
+        let fed = try engine.consume(
+            itemID: .dewberry,
+            commandID: commandID,
+            in: state
+        )
+        let replayed = try engine.consume(
+            itemID: .dewberry,
+            commandID: commandID,
+            in: fed
+        )
+
+        XCTAssertEqual(fed.inventory.quantity(of: .dewberry), 2)
+        XCTAssertEqual(fed.pet.needs.hunger, 5)
+        XCTAssertEqual(fed.vitals.fullness, 95)
+        XCTAssertEqual(fed.vitals.health, 100)
+        XCTAssertEqual(fed.progression.totalXP, state.progression.totalXP + 8)
+        XCTAssertEqual(fed.wallet.balance, state.wallet.balance + 2)
+        XCTAssertEqual(replayed, fed)
+    }
+
+    func testFullPetRefusesFoodWithoutMutation() {
+        let base = PocketPetGameState(migrating: makeChild())
+        let state = PocketPetGameState(
+            pet: base.pet,
+            progression: base.progression,
+            wallet: base.wallet,
+            inventory: base.inventory,
+            vitals: CompanionVitals(
+                health: base.vitals.health,
+                fullness: 95,
+                bodyComfort: base.vitals.bodyComfort
+            )
+        )
+
+        XCTAssertThrowsError(
+            try PocketPetGameEngine().consume(
+                itemID: .dewberry,
+                commandID: UUID(),
+                in: state
+            )
+        ) { error in
+            XCTAssertEqual(error as? PocketPetInteractionError, .tooFull)
+        }
+    }
+
+    func testTonicImprovesVitalsAndNeedWithoutExceedingBounds() throws {
+        let base = PocketPetGameState(migrating: makeChild())
+        var inventory = base.inventory
+        inventory.add(.brightSap, quantity: 1)
+        var progression = BondProgression()
+        progression.grantXP(300)
+        let state = PocketPetGameState(
+            pet: base.pet,
+            progression: progression,
+            wallet: base.wallet,
+            inventory: inventory,
+            vitals: CompanionVitals(health: 94, fullness: 40, bodyComfort: 50)
+        )
+
+        let treated = try PocketPetGameEngine().consume(
+            itemID: .brightSap,
+            commandID: UUID(),
+            in: state
+        )
+
+        XCTAssertEqual(treated.inventory.quantity(of: .brightSap), 0)
+        XCTAssertEqual(treated.vitals.health, 100)
+        XCTAssertEqual(treated.pet.needs.happiness, 100)
+    }
+
+    func testOwnedEquipmentCanBeEquipped() throws {
+        let state = PocketPetGameState(migrating: makeChild())
+
+        let equipped = try PocketPetGameEngine().equip(
+            itemID: .pollenBall,
+            in: state
+        )
+
+        XCTAssertEqual(equipped.inventory.equippedItem(in: .toy), .pollenBall)
+    }
+
+    func testUnownedEquipmentIsRejectedWithoutMutation() {
+        let state = PocketPetGameState(migrating: makeChild())
+
+        XCTAssertThrowsError(
+            try PocketPetGameEngine().equip(itemID: .leafCap, in: state)
+        ) { error in
+            XCTAssertEqual(error as? PocketPetInteractionError, .notOwned)
+        }
+    }
+
+    func testArcadeResultUpdatesHighScoreAndRewardsOnlyOnce() throws {
+        let state = PocketPetGameState(migrating: makeChild())
+        let engine = PocketPetGameEngine()
+        let commandID = UUID(
+            uuidString: "44444444-4444-4444-4444-444444444444"
+        )!
+
+        let result = try engine.recordArcadeResult(
+            gameID: .berryCatch,
+            score: 1_250,
+            commandID: commandID,
+            in: state
+        )
+        let replayed = try engine.recordArcadeResult(
+            gameID: .berryCatch,
+            score: 1_250,
+            commandID: commandID,
+            in: result
+        )
+
+        XCTAssertEqual(result.highScores[ArcadeGameID.berryCatch.rawValue], 1_250)
+        XCTAssertEqual(result.progression.totalXP, state.progression.totalXP + 5)
+        XCTAssertEqual(result.wallet.balance, state.wallet.balance + 12)
+        XCTAssertEqual(replayed, result)
+    }
+
+    func testLowerArcadeScoreKeepsRecordButStillAwardsTheRound() throws {
+        let engine = PocketPetGameEngine()
+        let first = try engine.recordArcadeResult(
+            gameID: .leafMemory,
+            score: 900,
+            commandID: UUID(),
+            in: PocketPetGameState(migrating: makeChild())
+        )
+
+        let second = try engine.recordArcadeResult(
+            gameID: .leafMemory,
+            score: 100,
+            commandID: UUID(),
+            in: first
+        )
+
+        XCTAssertEqual(second.highScores[ArcadeGameID.leafMemory.rawValue], 900)
+        XCTAssertGreaterThan(second.wallet.balance, first.wallet.balance)
+    }
+
+    func testNegativeArcadeScoreIsRejectedWithoutMutation() {
+        let state = PocketPetGameState(migrating: makeChild())
+
+        XCTAssertThrowsError(
+            try PocketPetGameEngine().recordArcadeResult(
+                gameID: .canopyClimb,
+                score: -1,
+                commandID: UUID(),
+                in: state
+            )
+        ) { error in
+            XCTAssertEqual(error as? PocketPetInteractionError, .invalidScore)
+        }
+    }
+
     private func makeChild() -> PetState {
         let createdAt = Date(timeIntervalSince1970: 1_700_000_000)
         return PetState(

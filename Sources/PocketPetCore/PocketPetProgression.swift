@@ -252,6 +252,20 @@ public struct ItemInventory: Codable, Equatable, Sendable {
         }
     }
 
+    @discardableResult
+    mutating func remove(_ itemID: ItemID, quantity: Int) -> Bool {
+        guard quantity > 0,
+              let index = stacks.firstIndex(where: { $0.itemID == itemID }),
+              stacks[index].quantity >= quantity else {
+            return false
+        }
+        stacks[index].add(-quantity)
+        if stacks[index].quantity == 0 {
+            stacks.remove(at: index)
+        }
+        return true
+    }
+
     mutating func own(_ itemID: ItemID) {
         guard !ownedItems.contains(itemID) else { return }
         ownedItems.append(itemID)
@@ -390,6 +404,12 @@ public struct CompanionVitals: Codable, Equatable, Sendable {
         self.bodyComfort = Self.clamp(bodyComfort)
     }
 
+    mutating func apply(_ effect: ItemEffect) {
+        health = Self.clamp(health + effect.health)
+        fullness = Self.clamp(fullness + effect.fullness)
+        bodyComfort = Self.clamp(bodyComfort + effect.bodyComfort)
+    }
+
     private static func clamp(_ value: Double) -> Double {
         min(100, max(0, value))
     }
@@ -521,6 +541,138 @@ public struct PocketPetMarket: Sendable {
         } else {
             candidate.inventory.own(itemID)
         }
+        return candidate
+    }
+}
+
+public enum ArcadeGameID: String, Codable, CaseIterable, Sendable {
+    case berryCatch = "berry-catch"
+    case canopyClimb = "canopy-climb"
+    case leafMemory = "leaf-memory"
+}
+
+public enum PocketPetInteractionError: Error, Equatable, Sendable {
+    case unknownItem
+    case notConsumable
+    case outOfStock
+    case tooFull
+    case unavailableUntilHatched
+    case notEquippable
+    case notOwned
+    case invalidScore
+}
+
+/// Pure, deterministic transitions for the expanded care loop. Command IDs are
+/// also recorded by the wallet, so replaying an interrupted command cannot
+/// consume a second item or award its currency twice.
+public struct PocketPetGameEngine: Sendable {
+    public let catalog: PocketPetCatalog
+
+    public init(catalog: PocketPetCatalog = .productBaseline) {
+        self.catalog = catalog
+    }
+
+    public func consume(
+        itemID: ItemID,
+        commandID: UUID,
+        in state: PocketPetGameState
+    ) throws -> PocketPetGameState {
+        guard let item = catalog.item(withID: itemID) else {
+            throw PocketPetInteractionError.unknownItem
+        }
+        guard item.kind.isConsumable else {
+            throw PocketPetInteractionError.notConsumable
+        }
+        guard state.pet.stage != .egg else {
+            throw PocketPetInteractionError.unavailableUntilHatched
+        }
+        guard !state.wallet.hasProcessed(commandID) else { return state }
+        guard state.inventory.quantity(of: itemID) > 0 else {
+            throw PocketPetInteractionError.outOfStock
+        }
+        if item.kind == .food && state.vitals.fullness >= 95 {
+            throw PocketPetInteractionError.tooFull
+        }
+
+        var candidate = state
+        guard candidate.inventory.remove(itemID, quantity: 1) else {
+            throw PocketPetInteractionError.outOfStock
+        }
+
+        var needs = candidate.pet.needs
+        needs.apply(
+            NeedChange(
+                hunger: item.effect.hunger,
+                happiness: item.effect.joy,
+                energy: item.effect.energy,
+                cleanliness: item.effect.cleanliness
+            )
+        )
+        candidate.pet.setNeeds(needs)
+        candidate.vitals.apply(item.effect)
+        candidate.pet.recordCareAction(
+            at: candidate.pet.lastReconciledAt,
+            markWindow: PetRules.productBaseline.careMarkWindow
+        )
+
+        let xp = item.kind == .food ? 8 : 5
+        let advance = candidate.progression.grantXP(xp)
+        try candidate.wallet.apply(
+            SunSeedTransaction(
+                id: commandID,
+                kind: .earn,
+                amount: 2 + advance.sunSeedReward,
+                reason: "care.consume.\(itemID.rawValue)"
+            )
+        )
+        return candidate
+    }
+
+    public func equip(
+        itemID: ItemID,
+        in state: PocketPetGameState
+    ) throws -> PocketPetGameState {
+        guard let item = catalog.item(withID: itemID) else {
+            throw PocketPetInteractionError.unknownItem
+        }
+        guard let slot = item.equipmentSlot else {
+            throw PocketPetInteractionError.notEquippable
+        }
+        guard state.inventory.owns(itemID) else {
+            throw PocketPetInteractionError.notOwned
+        }
+
+        var candidate = state
+        candidate.inventory.equip(itemID, in: slot)
+        return candidate
+    }
+
+    public func recordArcadeResult(
+        gameID: ArcadeGameID,
+        score: Int,
+        commandID: UUID,
+        in state: PocketPetGameState
+    ) throws -> PocketPetGameState {
+        guard score >= 0 else {
+            throw PocketPetInteractionError.invalidScore
+        }
+        guard !state.wallet.hasProcessed(commandID) else { return state }
+
+        var candidate = state
+        let previousHighScore = candidate.highScores[gameID.rawValue] ?? 0
+        candidate.highScores[gameID.rawValue] = max(previousHighScore, score)
+
+        let xp = min(30, max(1, score / 250))
+        let advance = candidate.progression.grantXP(xp)
+        let playReward = min(50, max(1, score / 100))
+        try candidate.wallet.apply(
+            SunSeedTransaction(
+                id: commandID,
+                kind: .earn,
+                amount: playReward + advance.sunSeedReward,
+                reason: "arcade.result.\(gameID.rawValue)"
+            )
+        )
         return candidate
     }
 }
