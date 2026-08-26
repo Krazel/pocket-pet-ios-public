@@ -40,14 +40,32 @@ struct PocketPetApp: App {
                         onContinue: model.continueFromAdultEvolution
                     )
                 case .home:
-                    if let habitatState = model.habitatState {
+                    if model.currentRoom == .pantryNook,
+                       let pantryState = model.pantryState,
+                       let pet = model.pet {
+                        PantryNookView(
+                            state: pantryState,
+                            pet: pet,
+                            prefersReducedMotion: model.prefersReducedMotion,
+                            offerSequence: model.pantryOfferSequence,
+                            isOperationInFlight: model.isPantryOperationInFlight,
+                            isRoomTransitionInFlight: model.isRoomTransitionInFlight,
+                            message: model.pantryMessage,
+                            onSelectFood: model.selectPantryFood,
+                            onOffer: model.offerSelectedPantryFood,
+                            onMove: model.move,
+                            onDismissMessage: model.clearPantryMessage
+                        )
+                    } else if let habitatState = model.habitatState {
                         HabitatHomeView(
                             state: habitatState,
                             prefersReducedMotion: model.prefersReducedMotion,
                             isCareInFlight: model.isCareInFlight,
+                            isRoomTransitionInFlight: model.isRoomTransitionInFlight,
                             onCare: model.perform,
                             onPet: model.petCreature,
-                            onOpenSettings: model.openSettings
+                            onOpenSettings: model.openSettings,
+                            onMove: model.move
                         )
                     }
                 }

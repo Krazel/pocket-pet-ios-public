@@ -82,6 +82,84 @@ final class PocketPetExpandedStateCoordinatorTests: XCTestCase {
         XCTAssertEqual(try fixture.preferencesStore.load(), updated.preferences)
     }
 
+    func testMovingToPantryPersistsAcrossCoordinatorRelaunch() async throws {
+        let fixture = try makeFixture(with: makeChild())
+        let firstCoordinator = makeCoordinator(fixture: fixture)
+        _ = try await firstCoordinator.startForegroundSession()
+
+        let moved = try await firstCoordinator.move(to: .pantryNook)
+        let relaunched = makeCoordinator(fixture: fixture)
+        let restored = try await relaunched.startForegroundSession()
+
+        XCTAssertEqual(moved.gameState?.location, .pantryNook)
+        XCTAssertEqual(restored.gameState?.location, .pantryNook)
+    }
+
+    func testAlreadyExpandedStateKeepsEveryExpansionFieldOnStart() async throws {
+        let fixture = try makeFixture(with: nil)
+        let commandID = UUID(
+            uuidString: "88888888-8888-8888-8888-888888888888"
+        )!
+        let expanded = PocketPetGameState(
+            pet: makeChild(),
+            progression: BondProgression(totalXP: 140),
+            wallet: SunSeedWallet(
+                balance: 124,
+                processedTransactionIDs: [commandID]
+            ),
+            inventory: ItemInventory(
+                stacks: [
+                    InventoryStack(itemID: .dewberry, quantity: 8),
+                    InventoryStack(itemID: .seedBiscuit, quantity: 5),
+                    InventoryStack(itemID: .mossMelon, quantity: 4),
+                ],
+                ownedItems: [.pollenBall, .basicBrush, .sunnyPatio],
+                equippedItems: [
+                    EquippedItem(slot: .toy, itemID: .pollenBall),
+                    EquippedItem(slot: .washTool, itemID: .basicBrush),
+                    EquippedItem(slot: .wallpaper, itemID: .sunnyPatio),
+                ]
+            ),
+            vitals: CompanionVitals(
+                health: 88,
+                fullness: 72,
+                bodyComfort: 91
+            ),
+            location: .pantryNook,
+            highScores: [ArcadeGameID.berryCatch.rawValue: 900],
+            processedCommandIDs: [commandID]
+        )
+        try fixture.gameStore.save(expanded)
+
+        let restored = try await makeCoordinator(fixture: fixture)
+            .startForegroundSession()
+
+        XCTAssertEqual(restored.gameState, expanded)
+    }
+
+    func testUnusablePrimaryAndBackupThrowInsteadOfShowingNewOnboarding() async throws {
+        let fixture = try makeFixture(with: nil)
+        try Data("broken primary".utf8).write(
+            to: fixture.gameStore.fileURL,
+            options: .atomic
+        )
+        try Data("broken backup".utf8).write(
+            to: fixture.gameStore.backupURL,
+            options: .atomic
+        )
+        let coordinator = makeCoordinator(fixture: fixture)
+
+        do {
+            _ = try await coordinator.startForegroundSession()
+            XCTFail("Corrupt local progress must not become onboarding.")
+        } catch {
+            XCTAssertEqual(
+                error as? PocketPetGamePersistenceError,
+                .noUsableLocalSnapshot
+            )
+        }
+    }
+
     private func makeCoordinator(
         fixture: ExpandedCoordinatorFixture
     ) -> PocketPetExpandedStateCoordinator {

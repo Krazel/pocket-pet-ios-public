@@ -332,6 +332,46 @@ try {
     if ($appModel.Contains('private let coordinator: PocketPetStateCoordinator')) {
         Fail 'the production app still owns the legacy-only coordinator.'
     }
+    $pantryPresentation = Get-Content -Raw (
+        'Sources\PocketPetCore\PocketPetPantryPresentation.swift'
+    )
+    foreach ($requiredPantryToken in @(
+        'PocketPetPantryPresentation',
+        'PocketPetPantryFixtures',
+        'PocketPetPantryProductMessage',
+        'case pantry',
+        'PantryNookView',
+        'pantry_wall_window_base'
+    )) {
+        if (-not (
+                $appModel.Contains($requiredPantryToken) -or
+                $pantryPresentation.Contains($requiredPantryToken) -or
+                (Get-Content -Raw 'PocketPetApp\Features\Pantry\PantryScene.swift').Contains($requiredPantryToken) -or
+                (Get-Content -Raw 'PocketPetApp\App\PocketPetApp.swift').Contains($requiredPantryToken)
+            )) {
+            Fail "Pantry integration is missing $requiredPantryToken."
+        }
+    }
+    $pantryAssets = @(
+        Get-ChildItem 'PocketPetApp\Resources\Artwork\Pantry' -Filter '*.png'
+    )
+    if ($pantryAssets.Count -ne 18) {
+        Fail "Pantry has $($pantryAssets.Count) runtime PNGs; expected 18."
+    }
+    $projectFile = Get-Content -Raw (
+        'PocketPetApp\PocketPetApp.xcodeproj\project.pbxproj'
+    )
+    foreach ($pantryAsset in $pantryAssets) {
+        if (-not $projectFile.Contains("$($pantryAsset.Name) in Resources")) {
+            Fail "Pantry runtime asset is not bundled: $($pantryAsset.Name)."
+        }
+    }
+    if ([regex]::Matches(
+            $projectFile,
+            'MARKETING_VERSION = 0\.2;'
+        ).Count -ne 4) {
+        Fail 'all Pocket Pet 0.2 build configurations must use version 0.2.'
+    }
     foreach ($requiredHarnessToken in @(
         '--visual-state',
         '--visual-static',

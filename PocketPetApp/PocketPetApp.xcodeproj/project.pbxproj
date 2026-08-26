@@ -51,6 +51,28 @@
 		01000000000000000000002E /* icon_stage_child.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002E /* icon_stage_child.png */; };
 		01000000000000000000002F /* icon_stage_adult.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000002F /* icon_stage_adult.png */; };
 		010000000000000000000030 /* PocketPetVisualCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000030 /* PocketPetVisualCaptureTests.swift */; };
+		010000000000000000000031 /* PantryNookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000032 /* PantryNookView.swift */; };
+		010000000000000000000032 /* PantryScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000033 /* PantryScene.swift */; };
+		010000000000000000000033 /* PantrySceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000034 /* PantrySceneView.swift */; };
+		010000000000000000000034 /* RoomRibbon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000035 /* RoomRibbon.swift */; };
+		010000000000000000000035 /* food_dewberry.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000036 /* food_dewberry.png */; };
+		010000000000000000000036 /* food_moss_melon.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000037 /* food_moss_melon.png */; };
+		010000000000000000000037 /* food_seed_biscuit.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000038 /* food_seed_biscuit.png */; };
+		010000000000000000000038 /* header_garden_ribbon.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000039 /* header_garden_ribbon.png */; };
+		010000000000000000000039 /* icon_currency_sun_seed.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003A /* icon_currency_sun_seed.png */; };
+		01000000000000000000003A /* icon_need_clean.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003B /* icon_need_clean.png */; };
+		01000000000000000000003B /* icon_need_energy.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003C /* icon_need_energy.png */; };
+		01000000000000000000003C /* icon_need_health.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003D /* icon_need_health.png */; };
+		01000000000000000000003D /* icon_need_hunger.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003E /* icon_need_hunger.png */; };
+		01000000000000000000003E /* icon_need_joy.png in Resources */ = {isa = PBXBuildFile; fileRef = 02000000000000000000003F /* icon_need_joy.png */; };
+		01000000000000000000003F /* icon_room_home.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000040 /* icon_room_home.png */; };
+		010000000000000000000040 /* icon_room_more.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000041 /* icon_room_more.png */; };
+		010000000000000000000041 /* icon_room_nest.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000042 /* icon_room_nest.png */; };
+		010000000000000000000042 /* icon_room_pantry.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000043 /* icon_room_pantry.png */; };
+		010000000000000000000043 /* icon_room_play.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000044 /* icon_room_play.png */; };
+		010000000000000000000044 /* icon_room_wash.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000045 /* icon_room_wash.png */; };
+		010000000000000000000045 /* pantry_offer_hand.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000046 /* pantry_offer_hand.png */; };
+		010000000000000000000046 /* pantry_wall_window_base.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000047 /* pantry_wall_window_base.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +131,28 @@
 		02000000000000000000002F /* icon_stage_adult.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_stage_adult.png; sourceTree = "<group>"; };
 		020000000000000000000030 /* PocketPetVisualCaptureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocketPetVisualCaptureTests.swift; sourceTree = "<group>"; };
 		020000000000000000000031 /* PocketPetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PocketPetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		020000000000000000000032 /* PantryNookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryNookView.swift; sourceTree = "<group>"; };
+		020000000000000000000033 /* PantryScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryScene.swift; sourceTree = "<group>"; };
+		020000000000000000000034 /* PantrySceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantrySceneView.swift; sourceTree = "<group>"; };
+		020000000000000000000035 /* RoomRibbon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomRibbon.swift; sourceTree = "<group>"; };
+		020000000000000000000036 /* food_dewberry.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = food_dewberry.png; sourceTree = "<group>"; };
+		020000000000000000000037 /* food_moss_melon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = food_moss_melon.png; sourceTree = "<group>"; };
+		020000000000000000000038 /* food_seed_biscuit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = food_seed_biscuit.png; sourceTree = "<group>"; };
+		020000000000000000000039 /* header_garden_ribbon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = header_garden_ribbon.png; sourceTree = "<group>"; };
+		02000000000000000000003A /* icon_currency_sun_seed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_currency_sun_seed.png; sourceTree = "<group>"; };
+		02000000000000000000003B /* icon_need_clean.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_need_clean.png; sourceTree = "<group>"; };
+		02000000000000000000003C /* icon_need_energy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_need_energy.png; sourceTree = "<group>"; };
+		02000000000000000000003D /* icon_need_health.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_need_health.png; sourceTree = "<group>"; };
+		02000000000000000000003E /* icon_need_hunger.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_need_hunger.png; sourceTree = "<group>"; };
+		02000000000000000000003F /* icon_need_joy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_need_joy.png; sourceTree = "<group>"; };
+		020000000000000000000040 /* icon_room_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_room_home.png; sourceTree = "<group>"; };
+		020000000000000000000041 /* icon_room_more.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_room_more.png; sourceTree = "<group>"; };
+		020000000000000000000042 /* icon_room_nest.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_room_nest.png; sourceTree = "<group>"; };
+		020000000000000000000043 /* icon_room_pantry.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_room_pantry.png; sourceTree = "<group>"; };
+		020000000000000000000044 /* icon_room_play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_room_play.png; sourceTree = "<group>"; };
+		020000000000000000000045 /* icon_room_wash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_room_wash.png; sourceTree = "<group>"; };
+		020000000000000000000046 /* pantry_offer_hand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pantry_offer_hand.png; sourceTree = "<group>"; };
+		020000000000000000000047 /* pantry_wall_window_base.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pantry_wall_window_base.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +208,8 @@
 			isa = PBXGroup;
 			children = (
 				040000000000000000000005 /* Habitat */,
+				040000000000000000000013 /* Pantry */,
+				040000000000000000000014 /* Rooms */,
 				040000000000000000000009 /* Onboarding */,
 				04000000000000000000000A /* Milestone */,
 				04000000000000000000000C /* Settings */,
@@ -183,6 +229,24 @@
 				02000000000000000000000A /* HabitatHomeView.swift */,
 			);
 			path = Habitat;
+			sourceTree = "<group>";
+		};
+		040000000000000000000013 /* Pantry */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000032 /* PantryNookView.swift */,
+				020000000000000000000033 /* PantryScene.swift */,
+				020000000000000000000034 /* PantrySceneView.swift */,
+			);
+			path = Pantry;
+			sourceTree = "<group>";
+		};
+		040000000000000000000014 /* Rooms */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000035 /* RoomRibbon.swift */,
+			);
+			path = Rooms;
 			sourceTree = "<group>";
 		};
 		040000000000000000000009 /* Onboarding */ = {
@@ -250,6 +314,7 @@
 				04000000000000000000000F /* Settings */,
 				040000000000000000000010 /* PetStates */,
 				040000000000000000000011 /* UI */,
+				040000000000000000000015 /* Pantry */,
 			);
 			path = Artwork;
 			sourceTree = "<group>";
@@ -298,6 +363,31 @@
 				02000000000000000000002F /* icon_stage_adult.png */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		040000000000000000000015 /* Pantry */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000036 /* food_dewberry.png */,
+				020000000000000000000037 /* food_moss_melon.png */,
+				020000000000000000000038 /* food_seed_biscuit.png */,
+				020000000000000000000039 /* header_garden_ribbon.png */,
+				02000000000000000000003A /* icon_currency_sun_seed.png */,
+				02000000000000000000003B /* icon_need_clean.png */,
+				02000000000000000000003C /* icon_need_energy.png */,
+				02000000000000000000003D /* icon_need_health.png */,
+				02000000000000000000003E /* icon_need_hunger.png */,
+				02000000000000000000003F /* icon_need_joy.png */,
+				020000000000000000000040 /* icon_room_home.png */,
+				020000000000000000000041 /* icon_room_more.png */,
+				020000000000000000000042 /* icon_room_nest.png */,
+				020000000000000000000043 /* icon_room_pantry.png */,
+				020000000000000000000044 /* icon_room_play.png */,
+				020000000000000000000045 /* icon_room_wash.png */,
+				020000000000000000000046 /* pantry_offer_hand.png */,
+				020000000000000000000047 /* pantry_wall_window_base.png */,
+			);
+			path = Pantry;
 			sourceTree = "<group>";
 		};
 		040000000000000000000008 /* Products */ = {
@@ -429,6 +519,24 @@
 				01000000000000000000002D /* spriglet_adult_sleeping.png in Resources */,
 				01000000000000000000002E /* icon_stage_child.png in Resources */,
 				01000000000000000000002F /* icon_stage_adult.png in Resources */,
+				010000000000000000000035 /* food_dewberry.png in Resources */,
+				010000000000000000000036 /* food_moss_melon.png in Resources */,
+				010000000000000000000037 /* food_seed_biscuit.png in Resources */,
+				010000000000000000000038 /* header_garden_ribbon.png in Resources */,
+				010000000000000000000039 /* icon_currency_sun_seed.png in Resources */,
+				01000000000000000000003A /* icon_need_clean.png in Resources */,
+				01000000000000000000003B /* icon_need_energy.png in Resources */,
+				01000000000000000000003C /* icon_need_health.png in Resources */,
+				01000000000000000000003D /* icon_need_hunger.png in Resources */,
+				01000000000000000000003E /* icon_need_joy.png in Resources */,
+				01000000000000000000003F /* icon_room_home.png in Resources */,
+				010000000000000000000040 /* icon_room_more.png in Resources */,
+				010000000000000000000041 /* icon_room_nest.png in Resources */,
+				010000000000000000000042 /* icon_room_pantry.png in Resources */,
+				010000000000000000000043 /* icon_room_play.png in Resources */,
+				010000000000000000000044 /* icon_room_wash.png in Resources */,
+				010000000000000000000045 /* pantry_offer_hand.png in Resources */,
+				010000000000000000000046 /* pantry_wall_window_base.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,6 +573,10 @@
 				01000000000000000000001E /* ReminderSettingsView.swift in Sources */,
 				01000000000000000000001F /* PrivacySettingsView.swift in Sources */,
 				010000000000000000000027 /* AdultEvolutionView.swift in Sources */,
+				010000000000000000000031 /* PantryNookView.swift in Sources */,
+				010000000000000000000032 /* PantryScene.swift in Sources */,
+				010000000000000000000033 /* PantrySceneView.swift in Sources */,
+				010000000000000000000034 /* RoomRibbon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,7 +642,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.pocketpet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -555,7 +667,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.pocketpet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -573,7 +685,7 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.pocketpet.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -591,7 +703,7 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.pocketpet.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

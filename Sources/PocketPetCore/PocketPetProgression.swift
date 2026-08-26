@@ -506,7 +506,7 @@ public struct PocketPetWellbeingRules: Codable, Equatable, Sendable {
     )
 }
 
-public enum PetSpaceID: String, Codable, CaseIterable, Sendable {
+public enum PetSpaceID: String, Codable, CaseIterable, Hashable, Sendable {
     case sunnyPatio
     case pantryNook
     case washNook

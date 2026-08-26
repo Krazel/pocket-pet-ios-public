@@ -16,6 +16,7 @@ private enum PocketPetVisualScenario: String, CaseIterable {
     case adultComfortable = "adult-comfortable"
     case adultNeedsCare = "adult-needs-care"
     case adultSleeping = "adult-sleeping"
+    case pantry
     case settingsOff = "settings-off"
     case settingsOn = "settings-on"
     case settingsDenied = "settings-denied"
@@ -127,6 +128,11 @@ final class PocketPetAppModel: ObservableObject {
     @Published private(set) var isSettingsOperationInFlight = false
     @Published private(set) var settingsError: String?
     @Published private(set) var appError: String?
+    @Published private(set) var selectedPantryFoodID: ItemID?
+    @Published private(set) var pantryMessage: PocketPetPantryProductMessage?
+    @Published private(set) var pantryOfferSequence = 0
+    @Published private(set) var isPantryOperationInFlight = false
+    @Published private(set) var isRoomTransitionInFlight = false
 
     private let coordinator: PocketPetExpandedStateCoordinator
     private let reminderScheduler: any LocalReminderScheduling
@@ -181,6 +187,18 @@ final class PocketPetAppModel: ObservableObject {
             reactionSequence: reactionSequence,
             petTapSequence: petTapSequence
         )
+    }
+
+    var pantryState: PocketPetPantryPresentation? {
+        guard case .home = presentation, let gameState else { return nil }
+        return PocketPetPantryPresentation(
+            gameState: gameState,
+            selectedFoodID: selectedPantryFoodID
+        )
+    }
+
+    var currentRoom: PetSpaceID {
+        gameState?.location ?? .sunnyPatio
     }
 
     var isInitialLoadBlocked: Bool {
@@ -483,6 +501,72 @@ final class PocketPetAppModel: ObservableObject {
         }
     }
 
+    func move(to location: PetSpaceID) {
+        guard case .home = presentation,
+              location == .sunnyPatio || location == .pantryNook,
+              !isRoomTransitionInFlight else { return }
+        isRoomTransitionInFlight = true
+        pantryMessage = nil
+        enqueueStateOperation { [weak self] in
+            guard let self else { return }
+            defer { isRoomTransitionInFlight = false }
+            do {
+                apply(try await coordinator.move(to: location))
+            } catch let error as PocketPetCoordinatorError {
+                handleCoordinatorError(error)
+            } catch {
+                appError = "That room could not be opened. Your saved progress is safe."
+            }
+        }
+    }
+
+    func selectPantryFood(_ itemID: ItemID) {
+        guard currentRoom == .pantryNook,
+              pantryState?.foods.contains(where: {
+                  $0.id == itemID && $0.availability == .available
+              }) == true,
+              !isPantryOperationInFlight else { return }
+        selectedPantryFoodID = itemID
+        pantryMessage = nil
+    }
+
+    func offerSelectedPantryFood() {
+        guard currentRoom == .pantryNook,
+              let itemID = selectedPantryFoodID,
+              !isPantryOperationInFlight,
+              !isRoomTransitionInFlight else { return }
+        let itemName = pantryState?.foods.first(where: { $0.id == itemID })?.name
+            ?? "That snack"
+        isPantryOperationInFlight = true
+        pantryMessage = nil
+        let commandID = UUID()
+        enqueueStateOperation { [weak self] in
+            guard let self else { return }
+            defer { isPantryOperationInFlight = false }
+            do {
+                let snapshot = try await coordinator.consume(
+                    itemID: itemID,
+                    commandID: commandID
+                )
+                apply(snapshot)
+                pantryOfferSequence += 1
+                playCareFeedback()
+            } catch let error as PocketPetInteractionError {
+                pantryMessage = PocketPetPantryProductMessage
+                    .forInteractionError(error, itemName: itemName)
+                    ?? .persistenceFailure
+            } catch let error as PocketPetCoordinatorError {
+                handleCoordinatorError(error)
+            } catch {
+                pantryMessage = .persistenceFailure
+            }
+        }
+    }
+
+    func clearPantryMessage() {
+        pantryMessage = nil
+    }
+
     func petCreature() {
         guard pet != nil, case .home = presentation else { return }
         petTapSequence += 1
@@ -779,6 +863,7 @@ final class PocketPetAppModel: ObservableObject {
         #endif
         pet = snapshot.pet
         gameState = snapshot.gameState
+        normalizePantrySelection()
 
         guard let state = snapshot.pet else {
             clearReaction()
@@ -854,6 +939,21 @@ final class PocketPetAppModel: ObservableObject {
         reactionClearTask?.cancel()
         reactionClearTask = nil
         lastReaction = nil
+    }
+
+    private func normalizePantrySelection() {
+        guard let gameState else {
+            selectedPantryFoodID = nil
+            return
+        }
+        let pantry = PocketPetPantryPresentation(
+            gameState: gameState,
+            selectedFoodID: selectedPantryFoodID
+        )
+        guard selectedPantryFoodID == nil else { return }
+        selectedPantryFoodID = pantry.foods.first(where: {
+            $0.availability == .available
+        })?.id
     }
 
     private func handleCoordinatorError(_ error: PocketPetCoordinatorError) {
@@ -962,6 +1062,9 @@ final class PocketPetAppModel: ObservableObject {
         let gameStore = JSONFilePocketPetGameStateStore(
             fileURL: folder.appendingPathComponent("pet-state.json")
         )
+        if scenario == .pantry {
+            try gameStore.save(PocketPetPantryFixtures.levelTwo)
+        }
         let coordinator = PocketPetExpandedStateCoordinator(
             petEngine: PetEngine(clock: PocketPetVisualClock(now: visualNow)),
             gameStore: gameStore,
@@ -1008,7 +1111,7 @@ final class PocketPetAppModel: ObservableObject {
     private static func makeVisualPet(
         for scenario: PocketPetVisualScenario
     ) -> PetState? {
-        if scenario == .welcomeEmpty {
+        if scenario == .welcomeEmpty || scenario == .pantry {
             return nil
         }
 

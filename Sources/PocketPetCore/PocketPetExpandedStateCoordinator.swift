@@ -163,6 +163,22 @@ public actor PocketPetExpandedStateCoordinator {
         return makeSnapshot()
     }
 
+    public func move(to location: PetSpaceID) throws -> PocketPetSnapshot {
+        try loadIfNeeded()
+        guard let current = gameState else {
+            throw PocketPetCoordinatorError.noPet
+        }
+        guard current.pet.stage != .egg else {
+            throw PocketPetCoordinatorError.hatchingRequired
+        }
+        var candidate = gameEngine.reconcile(current, using: petEngine)
+        guard candidate.location != location else { return makeSnapshot() }
+        candidate.location = location
+        try gameStore.save(candidate)
+        gameState = candidate
+        return makeSnapshot()
+    }
+
     public func acknowledgeMilestone(
         _ milestone: PetMilestone
     ) throws -> PersistedPetCommandResult {
