@@ -18,20 +18,11 @@ enum PocketPetColors {
 
 /// Loads loose PNG resources by bundle URL. SwiftUI's asset-name initializer
 /// does not reliably resolve non-asset-catalog PNGs on every supported iOS SDK.
-struct PocketPetArtwork: View {
-    private let image: UIImage
-
-    init(_ name: String) {
-        if let url = Bundle.main.url(forResource: name, withExtension: "png"),
-           let image = UIImage(contentsOfFile: url.path) {
-            self.image = image
-        } else {
-            assertionFailure("Missing bundled artwork: \(name).png")
-            self.image = UIImage()
-        }
+func PocketPetArtwork(_ name: String) -> Image {
+    if let url = Bundle.main.url(forResource: name, withExtension: "png"),
+       let image = UIImage(contentsOfFile: url.path) {
+        return Image(uiImage: image)
     }
-
-    var body: some View {
-        Image(uiImage: image)
-    }
+    assertionFailure("Missing bundled artwork: \(name).png")
+    return Image(uiImage: UIImage())
 }
