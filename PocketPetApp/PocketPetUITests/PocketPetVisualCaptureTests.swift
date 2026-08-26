@@ -562,6 +562,13 @@ final class PocketPetDynamicTypeTests: PocketPetRuntimeQATestCase {
             extraArguments: ["--runtime-qa-extended-reactions"]
         )
         require(app.staticTexts["Pip's Habitat"])
+        for need in ["Hunger", "Happiness", "Energy", "Cleanliness"] {
+            XCTAssertGreaterThan(
+                require(app.otherElements[need]).frame.width,
+                250,
+                "\(need) should use the readable one-column AX5 layout"
+            )
+        }
         attachScreen("D04-home-top-AX5")
         exerciseCareAction(
             "Feed",

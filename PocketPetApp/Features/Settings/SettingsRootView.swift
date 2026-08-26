@@ -92,38 +92,28 @@ private struct SettingsMainView: View {
                     )
 
                     GardenSection(title: "Preferences") {
-                        Toggle(
+                        preferenceToggle(
+                            symbol: "speaker.wave.2.fill",
+                            title: "Sound",
                             isOn: Binding(
                                 get: { model.preferences.soundEnabled },
                                 set: model.setSoundEnabled
-                            )
-                        ) {
-                            GardenRowLabel(
-                                symbol: "speaker.wave.2.fill",
-                                title: "Sound"
-                            )
-                        }
-                        .tint(.green)
-                        .disabled(model.isSettingsOperationInFlight)
-                        .accessibilityHint("Controls non-essential in-app sound")
+                            ),
+                            hint: "Controls non-essential in-app sound"
+                        )
 
                         GardenDivider()
 
-                        Toggle(
+                        preferenceToggle(
+                            symbol: "circle.dotted",
+                            title: "Reduce Motion",
+                            subtitle: "System setting is respected.",
                             isOn: Binding(
                                 get: { model.preferences.reduceMotionEnabled },
                                 set: model.setReduceMotionEnabled
-                            )
-                        ) {
-                            GardenRowLabel(
-                                symbol: "circle.dotted",
-                                title: "Reduce Motion",
-                                subtitle: "System setting is respected."
-                            )
-                        }
-                        .tint(.green)
-                        .disabled(model.isSettingsOperationInFlight)
-                        .accessibilityHint("Additionally reduces movement inside Pocket Pet")
+                            ),
+                            hint: "Additionally reduces movement inside Pocket Pet"
+                        )
 
                         GardenDivider()
 
@@ -256,6 +246,53 @@ private struct SettingsMainView: View {
         } else {
             model.markReminderInvitationShown()
             showsReminderExplainer = true
+        }
+    }
+
+    @ViewBuilder
+    private func preferenceToggle(
+        symbol: String,
+        title: String,
+        subtitle: String? = nil,
+        isOn: Binding<Bool>,
+        hint: String
+    ) -> some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 0) {
+                GardenRowLabel(
+                    symbol: symbol,
+                    title: title,
+                    subtitle: subtitle
+                )
+                .accessibilityHidden(true)
+
+                HStack {
+                    Text(isOn.wrappedValue ? "On" : "Off")
+                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Toggle("", isOn: isOn)
+                        .labelsHidden()
+                        .accessibilityLabel(title)
+                        .accessibilityValue(isOn.wrappedValue ? "On" : "Off")
+                        .accessibilityHint(hint)
+                }
+                .padding(.horizontal, 17)
+                .padding(.bottom, 14)
+            }
+            .tint(.green)
+            .disabled(model.isSettingsOperationInFlight)
+        } else {
+            Toggle(isOn: isOn) {
+                GardenRowLabel(
+                    symbol: symbol,
+                    title: title,
+                    subtitle: subtitle
+                )
+            }
+            .tint(.green)
+            .disabled(model.isSettingsOperationInFlight)
+            .accessibilityHint(hint)
         }
     }
 

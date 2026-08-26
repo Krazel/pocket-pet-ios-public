@@ -60,23 +60,24 @@ struct NeedCard: View {
     }
 
     var body: some View {
-        VStack(spacing: 7) {
-            icon.view
-                .frame(width: 44, height: 44)
-
-            HStack(spacing: 4) {
-                ForEach(0..<4, id: \.self) { index in
-                    RoundedRectangle(cornerRadius: 3, style: .continuous)
-                        .fill(index < filledSegments ? color : PocketPetColors.outline.opacity(0.45))
-                        .frame(height: 10)
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                HStack(spacing: 16) {
+                    iconView
+                    VStack(alignment: .leading, spacing: 9) {
+                        titleView
+                        meter
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                VStack(spacing: 7) {
+                    iconView
+                    meter
+                    titleView
+                }
+                .frame(maxWidth: .infinity)
             }
-
-            Text(title)
-                .font(.system(.subheadline, design: .rounded, weight: .bold))
-                .foregroundStyle(PocketPetColors.evergreen)
-                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
-                .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.72)
         }
         .frame(maxWidth: .infinity, minHeight: 84)
         .padding(.horizontal, 8)
@@ -90,6 +91,29 @@ struct NeedCard: View {
         .accessibilityLabel(title)
         .accessibilityValue(accessibilityValue)
         .accessibilitySortPriority(accessibilitySortPriority)
+    }
+
+    private var iconView: some View {
+        icon.view
+            .frame(width: 44, height: 44)
+    }
+
+    private var meter: some View {
+        HStack(spacing: 4) {
+            ForEach(0..<4, id: \.self) { index in
+                RoundedRectangle(cornerRadius: 3, style: .continuous)
+                    .fill(index < filledSegments ? color : PocketPetColors.outline.opacity(0.45))
+                    .frame(height: 10)
+            }
+        }
+    }
+
+    private var titleView: some View {
+        Text(title)
+            .font(.system(.subheadline, design: .rounded, weight: .bold))
+            .foregroundStyle(PocketPetColors.evergreen)
+            .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+            .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.72)
     }
 
     private var accessibilityValue: String {

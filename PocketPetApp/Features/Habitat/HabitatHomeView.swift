@@ -53,32 +53,55 @@ struct HabitatHomeView: View {
         }
     }
 
+    @ViewBuilder
     private var header: some View {
-        ZStack {
-            Text("\(state.name)'s Habitat")
-                .font(.system(.title, design: .rounded, weight: .bold))
-                .foregroundStyle(PocketPetColors.evergreen)
-                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
-                .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.72)
-                .padding(.horizontal, 92)
-                .accessibilitySortPriority(100)
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(spacing: 10) {
+                habitatTitle
+                    .frame(maxWidth: .infinity)
 
-            HStack {
-                stageBadge
-                Spacer()
-                Button(action: onOpenSettings) {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 24, weight: .semibold))
-                        .foregroundStyle(PocketPetColors.evergreen)
-                        .frame(width: 48, height: 48)
-                        .background(Circle().fill(PocketPetColors.mint.opacity(0.72)))
+                HStack {
+                    stageBadge
+                    Spacer()
+                    settingsButton
                 }
-                .accessibilityLabel("Settings")
-                .accessibilityHint("Opens local settings")
-                .accessibilitySortPriority(50)
             }
+        } else {
+            ZStack {
+                habitatTitle
+                    .padding(.horizontal, 92)
+
+                HStack {
+                    stageBadge
+                    Spacer()
+                    settingsButton
+                }
+            }
+            .frame(minHeight: 54)
         }
-        .frame(minHeight: 54)
+    }
+
+    private var habitatTitle: some View {
+        Text("\(state.name)'s Habitat")
+            .font(.system(.title, design: .rounded, weight: .bold))
+            .foregroundStyle(PocketPetColors.evergreen)
+            .multilineTextAlignment(.center)
+            .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+            .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.72)
+            .accessibilitySortPriority(100)
+    }
+
+    private var settingsButton: some View {
+        Button(action: onOpenSettings) {
+            Image(systemName: "gearshape.fill")
+                .font(.system(size: 24, weight: .semibold))
+                .foregroundStyle(PocketPetColors.evergreen)
+                .frame(width: 48, height: 48)
+                .background(Circle().fill(PocketPetColors.mint.opacity(0.72)))
+        }
+        .accessibilityLabel("Settings")
+        .accessibilityHint("Opens local settings")
+        .accessibilitySortPriority(50)
     }
 
     private var stageBadge: some View {
@@ -109,7 +132,7 @@ struct HabitatHomeView: View {
         LazyVGrid(
             columns: Array(
                 repeating: GridItem(.flexible(), spacing: 8),
-                count: dynamicTypeSize.isAccessibilitySize ? 2 : 4
+                count: dynamicTypeSize.isAccessibilitySize ? 1 : 4
             ),
             spacing: 8
         ) {

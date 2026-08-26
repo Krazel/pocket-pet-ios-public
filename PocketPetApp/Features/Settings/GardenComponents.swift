@@ -166,28 +166,34 @@ struct GardenDisclosureRow: View {
     var value: String? = nil
     let action: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 14) {
-                Image(systemName: symbol)
-                    .font(.system(size: 23, weight: .semibold))
-                    .foregroundStyle(PocketPetColors.mutedEvergreen)
-                    .frame(width: 30)
-                    .accessibilityHidden(true)
-                Text(title)
-                    .font(.system(.title3, design: .rounded, weight: .semibold))
-                    .foregroundStyle(PocketPetColors.evergreen)
-                    .multilineTextAlignment(.leading)
-                Spacer(minLength: 8)
-                if let value {
-                    Text(value)
-                        .font(.system(.body, design: .rounded))
-                        .foregroundStyle(.secondary)
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            disclosureIcon
+                            Spacer(minLength: 8)
+                            if let value {
+                                disclosureValue(value)
+                            }
+                            disclosureChevron
+                        }
+                        disclosureTitle
+                    }
+                } else {
+                    HStack(spacing: 14) {
+                        disclosureIcon
+                        disclosureTitle
+                        Spacer(minLength: 8)
+                        if let value {
+                            disclosureValue(value)
+                        }
+                        disclosureChevron
+                    }
                 }
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(PocketPetColors.mutedEvergreen)
-                    .accessibilityHidden(true)
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 17)
@@ -198,6 +204,34 @@ struct GardenDisclosureRow: View {
         .accessibilityLabel(title)
         .accessibilityValue(value ?? "")
         .accessibilityHint("Opens \(title)")
+    }
+
+    private var disclosureIcon: some View {
+        Image(systemName: symbol)
+            .font(.system(size: 23, weight: .semibold))
+            .foregroundStyle(PocketPetColors.mutedEvergreen)
+            .frame(width: 30)
+            .accessibilityHidden(true)
+    }
+
+    private var disclosureTitle: some View {
+        Text(title)
+            .font(.system(.title3, design: .rounded, weight: .semibold))
+            .foregroundStyle(PocketPetColors.evergreen)
+            .multilineTextAlignment(.leading)
+    }
+
+    private func disclosureValue(_ value: String) -> some View {
+        Text(value)
+            .font(.system(.body, design: .rounded))
+            .foregroundStyle(.secondary)
+    }
+
+    private var disclosureChevron: some View {
+        Image(systemName: "chevron.right")
+            .font(.system(size: 18, weight: .bold))
+            .foregroundStyle(PocketPetColors.mutedEvergreen)
+            .accessibilityHidden(true)
     }
 }
 
