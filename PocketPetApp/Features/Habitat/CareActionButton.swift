@@ -12,10 +12,10 @@ struct CareActionButton: View {
     private var title: String {
         if action == .rest && isResting { return "Wake" }
         switch action {
-        case .feed: "Feed"
-        case .play: "Play"
-        case .rest: "Rest"
-        case .clean: "Clean"
+        case .feed: return "Feed"
+        case .play: return "Play"
+        case .rest: return "Rest"
+        case .clean: return "Clean"
         }
     }
 

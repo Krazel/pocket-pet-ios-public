@@ -166,6 +166,12 @@ try {
     if (-not $workflow.Contains('actions/upload-artifact@v6')) {
         Fail 'iOS verification workflow does not preserve evidence.'
     }
+    if ([regex]::Matches(
+            $workflow,
+            'include-hidden-files: true'
+        ).Count -ne 2) {
+        Fail 'both public jobs must include hidden verification evidence.'
+    }
     if (-not $workflow.Contains('actions/checkout@v5') -or
         -not $workflow.Contains('runs-on: macos-26')) {
         Fail 'iOS verification workflow does not use the approved public runner.'
@@ -217,6 +223,7 @@ try {
         'embedded-profile.plist',
         'required_resources=(',
         'pocket-pet-testflight-verification-',
+        'include-hidden-files: true',
         'Upload the authorized build to internal TestFlight'
     )) {
         if (-not $testFlightWorkflow.Contains($requiredTestFlightToken)) {

@@ -50,6 +50,7 @@ jobs:
           name: pocket-pet-ios-verification-${{ github.sha }}
           path: .verification-output/
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 14
 
   visual:
@@ -71,4 +72,5 @@ jobs:
           name: pocket-pet-ios-visual-${{ github.sha }}
           path: .verification-output/
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 14
