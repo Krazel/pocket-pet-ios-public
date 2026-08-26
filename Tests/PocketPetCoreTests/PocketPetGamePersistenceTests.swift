@@ -8,7 +8,7 @@ final class PocketPetGamePersistenceTests: XCTestCase {
     }
 
     func testLegacyPetLoadsAsExpandedGameWithoutReplacingLegacyBytes() throws {
-        let store = makeStore()
+        let store = try makeStore()
         let legacy = makeLegacyPet()
         let legacyData = try encodeLegacy(legacy)
         try legacyData.write(to: store.fileURL, options: .atomic)
@@ -21,7 +21,7 @@ final class PocketPetGamePersistenceTests: XCTestCase {
     }
 
     func testSavingMigrationPreservesLegacyAsBackupThenRoundTripsGame() throws {
-        let store = makeStore()
+        let store = try makeStore()
         let legacy = makeLegacyPet()
         let legacyData = try encodeLegacy(legacy)
         try legacyData.write(to: store.fileURL, options: .atomic)
@@ -34,7 +34,7 @@ final class PocketPetGamePersistenceTests: XCTestCase {
     }
 
     func testCorruptPrimaryFallsBackToLastKnownGoodExpandedGame() throws {
-        let store = makeStore()
+        let store = try makeStore()
         let game = PocketPetGameState(migrating: makeLegacyPet())
         try store.save(game)
         try Data("broken".utf8).write(to: store.fileURL, options: .atomic)
@@ -43,7 +43,7 @@ final class PocketPetGamePersistenceTests: XCTestCase {
     }
 
     func testFutureExpandedSchemaIsRejectedBeforeFallback() throws {
-        let store = makeStore()
+        let store = try makeStore()
         try Data(#"{"gameSchemaVersion":99}"#.utf8).write(
             to: store.fileURL,
             options: .atomic
@@ -58,7 +58,7 @@ final class PocketPetGamePersistenceTests: XCTestCase {
     }
 
     func testFutureLegacySchemaIsRejectedBeforeFallback() throws {
-        let store = makeStore()
+        let store = try makeStore()
         try Data(#"{"schemaVersion":99}"#.utf8).write(
             to: store.fileURL,
             options: .atomic
@@ -73,7 +73,7 @@ final class PocketPetGamePersistenceTests: XCTestCase {
     }
 
     func testDeleteRemovesPrimaryAndBackup() throws {
-        let store = makeStore()
+        let store = try makeStore()
         try store.save(PocketPetGameState(migrating: makeLegacyPet()))
 
         try store.delete()
@@ -82,9 +82,13 @@ final class PocketPetGamePersistenceTests: XCTestCase {
         XCTAssertFalse(FileManager.default.fileExists(atPath: store.backupURL.path))
     }
 
-    private func makeStore() -> JSONFilePocketPetGameStateStore {
+    private func makeStore() throws -> JSONFilePocketPetGameStateStore {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(
+            at: directory,
+            withIntermediateDirectories: true
+        )
         return JSONFilePocketPetGameStateStore(
             fileURL: directory.appendingPathComponent("pet-state.json")
         )
