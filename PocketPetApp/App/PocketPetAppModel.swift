@@ -805,8 +805,19 @@ final class PocketPetAppModel: ObservableObject {
         reactionClearTask?.cancel()
         lastReaction = action
         reactionSequence += 1
+        let visibilityNanoseconds: UInt64
+        #if DEBUG
+        // XCTest waits for the application to become idle after a tap. Keep the
+        // approved response frame observable only in the deterministic capture
+        // harness; production feedback still expires after exactly one second.
+        visibilityNanoseconds = usesStaticVisualCapture
+            ? 5_000_000_000
+            : 1_000_000_000
+        #else
+        visibilityNanoseconds = 1_000_000_000
+        #endif
         reactionClearTask = Task { @MainActor [weak self] in
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            try? await Task.sleep(nanoseconds: visibilityNanoseconds)
             guard !Task.isCancelled else { return }
             self?.lastReaction = nil
         }

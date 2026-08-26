@@ -83,7 +83,7 @@ struct HabitatHomeView: View {
 
     private var stageBadge: some View {
         HStack(spacing: 6) {
-            Image(stageBadgeArtworkName, bundle: .main)
+            PocketPetArtwork(stageBadgeArtworkName)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 30, height: 30)

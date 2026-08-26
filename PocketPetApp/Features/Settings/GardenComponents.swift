@@ -10,7 +10,7 @@ struct GardenSurface<Content: View>: View {
     var body: some View {
         ZStack {
             PocketPetColors.cream.ignoresSafeArea()
-            Image("seed_nest_welcome_background", bundle: .main)
+            PocketPetArtwork("seed_nest_welcome_background")
                 .resizable()
                 .scaledToFill()
                 .opacity(0.72)
@@ -56,7 +56,7 @@ struct GardenNavigationHeader: View {
                 .foregroundStyle(PocketPetColors.evergreen)
                 .multilineTextAlignment(.center)
             if showsTitleLeaf {
-                Image("settings_title_leaf", bundle: .main)
+                PocketPetArtwork("settings_title_leaf")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 25, height: 25)
@@ -206,7 +206,7 @@ struct GardenMotif: View {
     let width: CGFloat
 
     var body: some View {
-        Image(name, bundle: .main)
+        PocketPetArtwork(name)
             .resizable()
             .scaledToFit()
             .frame(width: width)

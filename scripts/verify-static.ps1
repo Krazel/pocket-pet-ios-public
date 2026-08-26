@@ -100,6 +100,15 @@ try {
 
     $runtimeQA = Get-Content -Raw 'docs\RUNTIME_QA.md'
     $visualComparator = Get-Content -Raw 'scripts\compare-visual-captures.swift'
+    foreach ($manifestToken in @(
+        'manifest.json',
+        'exportedFileName',
+        'suggestedHumanReadableName'
+    )) {
+        if (-not $visualComparator.Contains($manifestToken)) {
+            Fail "visual comparator is missing Xcode attachment mapping token: $manifestToken."
+        }
+    }
     $comparatorMappings = [regex]::Matches(
         $visualComparator,
         'FrameSpec\(id: "(F\d{2})".*referencePath: "([^"]+)".*' +
@@ -343,6 +352,13 @@ try {
     }
 
     $projectFiles = @(Get-ChildItem 'PocketPetApp' -Recurse -File)
+    $looseSwiftUIImages = @(
+        Select-String -Path ($projectFiles | Where-Object Extension -eq '.swift').FullName `
+            -Pattern 'Image\([^\r\n]+bundle: \.main\)'
+    )
+    if ($looseSwiftUIImages.Count -ne 0) {
+        Fail 'loose PNG resources must use PocketPetArtwork for reliable bundle loading.'
+    }
     $missingReferences = @()
     [regex]::Matches($pbx, 'path = ([^;]+\.(swift|png));') |
         ForEach-Object {

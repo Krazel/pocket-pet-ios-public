@@ -52,7 +52,7 @@ enum PocketPetIcon: Int, CaseIterable {
     }
 
     private func generatedImage(named name: String) -> some View {
-        Image(name, bundle: .main)
+        PocketPetArtwork(name)
             .resizable()
             .interpolation(.high)
             .scaledToFit()

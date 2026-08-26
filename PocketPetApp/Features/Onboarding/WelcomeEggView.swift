@@ -150,7 +150,7 @@ struct WelcomeEggView: View {
             }
         }
         .background {
-            Image("seed_nest_welcome_background", bundle: .main)
+            PocketPetArtwork("seed_nest_welcome_background")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
@@ -177,7 +177,7 @@ struct WelcomeEggView: View {
     }
 
     private func hero(height: CGFloat) -> some View {
-        Image("seed_nest_closed_hero", bundle: .main)
+        PocketPetArtwork("seed_nest_closed_hero")
             .resizable()
             .scaledToFit()
             .frame(maxWidth: .infinity)

@@ -42,7 +42,7 @@ struct HatchingView: View {
         .background {
             ZStack(alignment: .top) {
                 PocketPetColors.cream
-                Image("sunny_patio_environment", bundle: .main)
+                PocketPetArtwork("sunny_patio_environment")
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: .infinity)
@@ -104,7 +104,7 @@ struct HatchingView: View {
                     .accessibilityHidden(true)
             }
 
-            Image("spriglet_child", bundle: .main)
+            PocketPetArtwork("spriglet_child")
                 .resizable()
                 .scaledToFit()
                 .frame(width: min(width * 0.91, 365))
@@ -116,7 +116,7 @@ struct HatchingView: View {
                 )
                 .accessibilityHidden(true)
 
-            Image("seed_nest_open_hero", bundle: .main)
+            PocketPetArtwork("seed_nest_open_hero")
                 .resizable()
                 .scaledToFit()
                 .frame(width: min(width * 1.08, 430))

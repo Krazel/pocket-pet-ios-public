@@ -67,6 +67,20 @@ private struct PixelImage {
     var bytes: [UInt8]
 }
 
+private struct AttachmentManifestEntry: Decodable {
+    let exportedFileName: String
+    let suggestedHumanReadableName: String
+}
+
+private struct AttachmentManifestGroup: Decodable {
+    let attachments: [AttachmentManifestEntry]
+}
+
+private struct NamedAttachment {
+    let url: URL
+    let searchableName: String
+}
+
 private struct CropRecord: Codable {
     let sourceWidth: Int
     let sourceHeight: Int
@@ -174,24 +188,80 @@ private func regularFiles(below root: URL) throws -> [URL] {
     return files.sorted { $0.path < $1.path }
 }
 
+private func namedAttachments(below root: URL) throws -> [NamedAttachment] {
+    let manager = FileManager.default
+    let manifest = root.appendingPathComponent("manifest.json")
+    guard manager.fileExists(atPath: manifest.path) else {
+        return try regularFiles(below: root).map {
+            NamedAttachment(url: $0, searchableName: $0.lastPathComponent)
+        }
+    }
+
+    let groups: [AttachmentManifestGroup]
+    do {
+        groups = try JSONDecoder().decode(
+            [AttachmentManifestGroup].self,
+            from: Data(contentsOf: manifest)
+        )
+    } catch {
+        throw ComparisonError.invalidInput(
+            "Cannot decode Xcode attachment manifest: \(error.localizedDescription)"
+        )
+    }
+
+    let entries = groups.flatMap(\.attachments)
+    let exportedNames = entries.map(\.exportedFileName)
+    guard Set(exportedNames).count == exportedNames.count else {
+        throw ComparisonError.invalidInput(
+            "Attachment manifest contains duplicate exported file names"
+        )
+    }
+
+    return try entries.map { entry in
+        guard !entry.exportedFileName.isEmpty,
+              !entry.suggestedHumanReadableName.isEmpty else {
+            throw ComparisonError.invalidInput(
+                "Attachment manifest contains an empty file or suggested name"
+            )
+        }
+        guard URL(fileURLWithPath: entry.exportedFileName).lastPathComponent ==
+                entry.exportedFileName else {
+            throw ComparisonError.invalidInput(
+                "Attachment manifest contains an unsafe exported file name"
+            )
+        }
+        let url = root.appendingPathComponent(entry.exportedFileName)
+        guard manager.fileExists(atPath: url.path),
+              try url.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile == true else {
+            throw ComparisonError.invalidInput(
+                "Attachment manifest references a missing file: \(entry.exportedFileName)"
+            )
+        }
+        return NamedAttachment(
+            url: url,
+            searchableName: entry.suggestedHumanReadableName
+        )
+    }
+}
+
 private func uniqueNamedFile(
     containing token: String,
     extensions: Set<String>,
-    among files: [URL]
+    among files: [NamedAttachment]
 ) throws -> URL {
     let loweredToken = token.lowercased()
     let matches = files.filter {
-        extensions.contains($0.pathExtension.lowercased()) &&
-        $0.lastPathComponent.lowercased().contains(loweredToken)
+        extensions.contains($0.url.pathExtension.lowercased()) &&
+        $0.searchableName.lowercased().contains(loweredToken)
     }
     guard matches.count == 1, let match = matches.first else {
-        let paths = matches.map(\.path).joined(separator: "\n  ")
+        let paths = matches.map(\.url.path).joined(separator: "\n  ")
         throw ComparisonError.invalidInput(
             "Expected exactly one exported attachment containing '\(token)', " +
             "found \(matches.count).\(paths.isEmpty ? "" : "\n  \(paths)")"
         )
     }
-    return match
+    return match.url
 }
 
 private func sha256(of url: URL) throws -> String {
@@ -489,7 +559,7 @@ private func relativePath(_ url: URL, from root: URL) -> String {
 private func run() throws {
     let arguments = try parseArguments()
     let manager = FileManager.default
-    let files = try regularFiles(below: arguments.attachments)
+    let files = try namedAttachments(below: arguments.attachments)
     let outputFolders = try prepareDirectories(arguments.output)
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]

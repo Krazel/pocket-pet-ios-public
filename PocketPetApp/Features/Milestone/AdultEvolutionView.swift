@@ -46,7 +46,7 @@ struct AdultEvolutionView: View {
         .background {
             ZStack(alignment: .top) {
                 PocketPetColors.cream
-                Image("sunny_patio_environment", bundle: .main)
+                PocketPetArtwork("sunny_patio_environment")
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: .infinity)
@@ -93,14 +93,14 @@ struct AdultEvolutionView: View {
                     .accessibilityHidden(true)
             }
 
-            Image("spriglet_child", bundle: .main)
+            PocketPetArtwork("spriglet_child")
                 .resizable()
                 .scaledToFit()
                 .frame(width: min(width * 0.88, 360))
                 .opacity(childOpacity)
                 .accessibilityHidden(true)
 
-            Image("spriglet_adult_neutral", bundle: .main)
+            PocketPetArtwork("spriglet_adult_neutral")
                 .resizable()
                 .scaledToFit()
                 .frame(width: min(width * 0.91, 375))
