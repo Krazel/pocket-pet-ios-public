@@ -27,6 +27,7 @@ struct PantryNookView: View {
                     }
                 } else {
                     content(sceneHeight: max(286, min(350, proxy.size.height * 0.39)))
+                        .ignoresSafeArea(edges: .top)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -102,17 +103,18 @@ struct PantryNookView: View {
         ZStack {
             PocketPetArtwork("header_garden_ribbon")
                 .resizable()
-                .scaledToFit()
+                .scaledToFill()
                 .accessibilityHidden(true)
             Text("Pantry Nook")
-                .font(.system(.largeTitle, design: .rounded, weight: .bold))
+                .font(.system(.title2, design: .rounded, weight: .bold))
                 .foregroundStyle(PocketPetColors.evergreen)
                 .minimumScaleFactor(0.72)
                 .lineLimit(1)
                 .padding(.horizontal, 54)
                 .accessibilityAddTraits(.isHeader)
         }
-        .frame(height: 57)
+        .frame(height: 82)
+        .clipped()
     }
 
     private var statusChips: some View {
