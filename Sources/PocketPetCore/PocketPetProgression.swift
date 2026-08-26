@@ -410,9 +410,100 @@ public struct CompanionVitals: Codable, Equatable, Sendable {
         bodyComfort = Self.clamp(bodyComfort + effect.bodyComfort)
     }
 
+    mutating func reconcile(
+        elapsedHours: Double,
+        wasResting: Bool,
+        needs: PetNeeds,
+        rules: PocketPetWellbeingRules
+    ) {
+        guard elapsedHours > 0 else { return }
+        let fullnessRate = wasResting
+            ? rules.restingFullnessLossPerHour
+            : rules.awakeFullnessLossPerHour
+        fullness = Self.clamp(fullness - fullnessRate * elapsedHours)
+
+        let urgentCount = PetNeed.allCases.filter {
+            needs.status(for: $0) == .urgent
+        }.count
+        if urgentCount > 0 {
+            health = max(
+                rules.recoverableHealthFloor,
+                health
+                    - Double(urgentCount)
+                    * rules.healthLossPerUrgentNeedHour
+                    * elapsedHours
+            )
+        } else if PetNeed.allCases.allSatisfy({
+            needs.status(for: $0) == .comfortable
+        }) {
+            health = Self.clamp(
+                health + rules.comfortableHealthRecoveryPerHour * elapsedHours
+            )
+        }
+
+        if fullness > rules.overfullThreshold {
+            bodyComfort = Self.clamp(
+                bodyComfort - rules.overfullComfortLossPerHour * elapsedHours
+            )
+        } else {
+            bodyComfort = Self.clamp(
+                bodyComfort + rules.comfortRecoveryPerHour * elapsedHours
+            )
+        }
+    }
+
     private static func clamp(_ value: Double) -> Double {
         min(100, max(0, value))
     }
+}
+
+public struct PocketPetWellbeingRules: Codable, Equatable, Sendable {
+    public var maximumReconcileInterval: TimeInterval
+    public var awakeFullnessLossPerHour: Double
+    public var restingFullnessLossPerHour: Double
+    public var recoverableHealthFloor: Double
+    public var healthLossPerUrgentNeedHour: Double
+    public var comfortableHealthRecoveryPerHour: Double
+    public var overfullThreshold: Double
+    public var overfullComfortLossPerHour: Double
+    public var comfortRecoveryPerHour: Double
+
+    public init(
+        maximumReconcileInterval: TimeInterval,
+        awakeFullnessLossPerHour: Double,
+        restingFullnessLossPerHour: Double,
+        recoverableHealthFloor: Double,
+        healthLossPerUrgentNeedHour: Double,
+        comfortableHealthRecoveryPerHour: Double,
+        overfullThreshold: Double,
+        overfullComfortLossPerHour: Double,
+        comfortRecoveryPerHour: Double
+    ) {
+        self.maximumReconcileInterval = max(0, maximumReconcileInterval)
+        self.awakeFullnessLossPerHour = max(0, awakeFullnessLossPerHour)
+        self.restingFullnessLossPerHour = max(0, restingFullnessLossPerHour)
+        self.recoverableHealthFloor = min(100, max(0, recoverableHealthFloor))
+        self.healthLossPerUrgentNeedHour = max(0, healthLossPerUrgentNeedHour)
+        self.comfortableHealthRecoveryPerHour = max(
+            0,
+            comfortableHealthRecoveryPerHour
+        )
+        self.overfullThreshold = min(100, max(0, overfullThreshold))
+        self.overfullComfortLossPerHour = max(0, overfullComfortLossPerHour)
+        self.comfortRecoveryPerHour = max(0, comfortRecoveryPerHour)
+    }
+
+    public static let productBaseline = PocketPetWellbeingRules(
+        maximumReconcileInterval: 72 * 60 * 60,
+        awakeFullnessLossPerHour: 4,
+        restingFullnessLossPerHour: 2,
+        recoverableHealthFloor: 10,
+        healthLossPerUrgentNeedHour: 0.75,
+        comfortableHealthRecoveryPerHour: 0.5,
+        overfullThreshold: 90,
+        overfullComfortLossPerHour: 1,
+        comfortRecoveryPerHour: 0.5
+    )
 }
 
 public enum PetSpaceID: String, Codable, CaseIterable, Sendable {
@@ -486,7 +577,7 @@ public struct PocketPetGameState: Codable, Equatable, Sendable {
             vitals: CompanionVitals(
                 health: 100,
                 fullness: 100 - pet.needs.hunger,
-                bodyComfort: 50
+                bodyComfort: 100
             )
         )
     }
@@ -560,6 +651,10 @@ public enum PocketPetInteractionError: Error, Equatable, Sendable {
     case notEquippable
     case notOwned
     case invalidScore
+    case foodRequiresInventory
+    case restRequiresNest
+    case notEnoughEnergy
+    case needsRecovery
 }
 
 /// Pure, deterministic transitions for the expanded care loop. Command IDs are
@@ -567,9 +662,40 @@ public enum PocketPetInteractionError: Error, Equatable, Sendable {
 /// consume a second item or award its currency twice.
 public struct PocketPetGameEngine: Sendable {
     public let catalog: PocketPetCatalog
+    public let wellbeingRules: PocketPetWellbeingRules
 
-    public init(catalog: PocketPetCatalog = .productBaseline) {
+    public init(
+        catalog: PocketPetCatalog = .productBaseline,
+        wellbeingRules: PocketPetWellbeingRules = .productBaseline
+    ) {
         self.catalog = catalog
+        self.wellbeingRules = wellbeingRules
+    }
+
+    public func reconcile(
+        _ state: PocketPetGameState,
+        using petEngine: PetEngine
+    ) -> PocketPetGameState {
+        let previousCheckpoint = state.pet.lastReconciledAt
+        let wasResting = state.pet.isResting
+        var candidate = state
+        candidate.pet = petEngine.reconcile(candidate.pet)
+        let elapsed = min(
+            wellbeingRules.maximumReconcileInterval,
+            max(
+                0,
+                candidate.pet.lastReconciledAt.timeIntervalSince(
+                    previousCheckpoint
+                )
+            )
+        )
+        candidate.vitals.reconcile(
+            elapsedHours: elapsed / 3_600,
+            wasResting: wasResting,
+            needs: candidate.pet.needs,
+            rules: wellbeingRules
+        )
+        return candidate
     }
 
     public func consume(
@@ -647,6 +773,50 @@ public struct PocketPetGameEngine: Sendable {
         return candidate
     }
 
+    public func performCare(
+        _ action: CareAction,
+        commandID: UUID,
+        using petEngine: PetEngine,
+        in state: PocketPetGameState
+    ) throws -> PocketPetGameState {
+        guard action != .feed else {
+            throw PocketPetInteractionError.foodRequiresInventory
+        }
+        guard action != .rest else {
+            throw PocketPetInteractionError.restRequiresNest
+        }
+        guard !state.wallet.hasProcessed(commandID) else { return state }
+
+        var candidate = reconcile(state, using: petEngine)
+        if action == .play {
+            guard candidate.pet.needs.energy >= 15 else {
+                throw PocketPetInteractionError.notEnoughEnergy
+            }
+            guard candidate.vitals.health >= 20 else {
+                throw PocketPetInteractionError.needsRecovery
+            }
+        }
+        candidate.pet = petEngine.perform(action, on: candidate.pet)
+        if action == .play {
+            candidate.vitals.apply(
+                ItemEffect(fullness: -4, bodyComfort: 6)
+            )
+        } else if action == .clean {
+            candidate.vitals.apply(ItemEffect(health: 1))
+        }
+
+        let advance = candidate.progression.grantXP(6)
+        try candidate.wallet.apply(
+            SunSeedTransaction(
+                id: commandID,
+                kind: .earn,
+                amount: 2 + advance.sunSeedReward,
+                reason: "care.action.\(action.rawValue)"
+            )
+        )
+        return candidate
+    }
+
     public func recordArcadeResult(
         gameID: ArcadeGameID,
         score: Int,
@@ -656,11 +826,21 @@ public struct PocketPetGameEngine: Sendable {
         guard score >= 0 else {
             throw PocketPetInteractionError.invalidScore
         }
+        guard state.pet.needs.energy >= 15 else {
+            throw PocketPetInteractionError.notEnoughEnergy
+        }
+        guard state.vitals.health >= 20 else {
+            throw PocketPetInteractionError.needsRecovery
+        }
         guard !state.wallet.hasProcessed(commandID) else { return state }
 
         var candidate = state
         let previousHighScore = candidate.highScores[gameID.rawValue] ?? 0
         candidate.highScores[gameID.rawValue] = max(previousHighScore, score)
+        var needs = candidate.pet.needs
+        needs.apply(NeedChange(happiness: 4, energy: -6))
+        candidate.pet.setNeeds(needs)
+        candidate.vitals.apply(ItemEffect(fullness: -5, bodyComfort: 6))
 
         let xp = min(30, max(1, score / 250))
         let advance = candidate.progression.grantXP(xp)

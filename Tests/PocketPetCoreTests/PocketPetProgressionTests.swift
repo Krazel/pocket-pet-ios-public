@@ -16,6 +16,7 @@ final class PocketPetProgressionTests: XCTestCase {
         XCTAssertEqual(game.inventory.equippedItem(in: .toy), .pollenBall)
         XCTAssertEqual(game.vitals.health, 100)
         XCTAssertEqual(game.vitals.fullness, 80)
+        XCTAssertEqual(game.vitals.bodyComfort, 100)
         XCTAssertEqual(game.location, .sunnyPatio)
     }
 
@@ -300,7 +301,99 @@ final class PocketPetProgressionTests: XCTestCase {
         }
     }
 
-    private func makeChild() -> PetState {
+    func testWellbeingReconcileCapsAbsenceAndKeepsHealthRecoverable() {
+        let state = PocketPetGameState(migrating: makeChild())
+        let future = state.pet.lastReconciledAt.addingTimeInterval(10 * 24 * 3_600)
+        let petEngine = PetEngine(clock: ProgressionTestClock(now: future))
+
+        let reconciled = PocketPetGameEngine().reconcile(
+            state,
+            using: petEngine
+        )
+
+        XCTAssertEqual(reconciled.pet.lastReconciledAt, future)
+        XCTAssertEqual(reconciled.vitals.fullness, 0)
+        XCTAssertEqual(reconciled.vitals.health, 10)
+        XCTAssertEqual(reconciled.vitals.bodyComfort, 100)
+    }
+
+    func testRewardedCareActionIsReplaySafe() throws {
+        let state = PocketPetGameState(migrating: makeChild())
+        let engine = PocketPetGameEngine()
+        let petEngine = PetEngine(
+            clock: ProgressionTestClock(now: state.pet.lastReconciledAt)
+        )
+        let commandID = UUID(
+            uuidString: "55555555-5555-5555-5555-555555555555"
+        )!
+
+        let played = try engine.performCare(
+            .play,
+            commandID: commandID,
+            using: petEngine,
+            in: state
+        )
+        let replayed = try engine.performCare(
+            .play,
+            commandID: commandID,
+            using: petEngine,
+            in: played
+        )
+
+        XCTAssertEqual(played.pet.needs.happiness, 100)
+        XCTAssertEqual(played.vitals.fullness, 76)
+        XCTAssertEqual(played.progression.totalXP, state.progression.totalXP + 6)
+        XCTAssertEqual(played.wallet.balance, state.wallet.balance + 2)
+        XCTAssertEqual(replayed, played)
+    }
+
+    func testFeedAndRestRouteToTheirDedicatedSystems() {
+        let state = PocketPetGameState(migrating: makeChild())
+        let petEngine = PetEngine(
+            clock: ProgressionTestClock(now: state.pet.lastReconciledAt)
+        )
+
+        XCTAssertThrowsError(
+            try PocketPetGameEngine().performCare(
+                .feed,
+                commandID: UUID(),
+                using: petEngine,
+                in: state
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? PocketPetInteractionError,
+                .foodRequiresInventory
+            )
+        }
+        XCTAssertThrowsError(
+            try PocketPetGameEngine().performCare(
+                .rest,
+                commandID: UUID(),
+                using: petEngine,
+                in: state
+            )
+        ) { error in
+            XCTAssertEqual(error as? PocketPetInteractionError, .restRequiresNest)
+        }
+    }
+
+    func testLowEnergyBlocksArcadeWithoutMutation() {
+        let state = PocketPetGameState(migrating: makeChild(energy: 10))
+
+        XCTAssertThrowsError(
+            try PocketPetGameEngine().recordArcadeResult(
+                gameID: .berryCatch,
+                score: 100,
+                commandID: UUID(),
+                in: state
+            )
+        ) { error in
+            XCTAssertEqual(error as? PocketPetInteractionError, .notEnoughEnergy)
+        }
+    }
+
+    private func makeChild(energy: Double = 80) -> PetState {
         let createdAt = Date(timeIntervalSince1970: 1_700_000_000)
         return PetState(
             name: "Pip",
@@ -311,7 +404,7 @@ final class PocketPetProgressionTests: XCTestCase {
             needs: PetNeeds(
                 hunger: 20,
                 happiness: 80,
-                energy: 80,
+                energy: energy,
                 cleanliness: 80
             )
         )
@@ -342,4 +435,8 @@ final class PocketPetProgressionTests: XCTestCase {
             completedCareActions: completedCareActions
         )
     }
+}
+
+private struct ProgressionTestClock: PetClock {
+    let now: Date
 }
