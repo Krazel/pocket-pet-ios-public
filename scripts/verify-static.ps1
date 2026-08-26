@@ -225,8 +225,8 @@ try {
     if ([regex]::Matches(
             $workflow,
             'include-hidden-files: true'
-        ).Count -ne 3) {
-        Fail 'all three public jobs must include hidden verification evidence.'
+        ).Count -ne 4) {
+        Fail 'all four public jobs must include hidden verification evidence.'
     }
     if (-not $workflow.Contains('actions/checkout@v5') -or
         -not $workflow.Contains('runs-on: macos-26')) {
@@ -372,6 +372,32 @@ try {
         ).Count -ne 4) {
         Fail 'all Pocket Pet 0.2 build configurations must use version 0.2.'
     }
+    $uiCaptureTests = Get-Content -Raw (
+        'PocketPetApp\PocketPetUITests\PocketPetVisualCaptureTests.swift'
+    )
+    $pantryCaptureScript = Get-Content -Raw 'scripts\run-pantry-capture.sh'
+    $publicVisualScript = Get-Content -Raw (
+        'scripts\run-public-visual-verification.sh'
+    )
+    foreach ($requiredPantryCaptureToken in @(
+        'PocketPetPantryCaptureTests',
+        'P01-pantry-reference-raw'
+    )) {
+        if (-not $uiCaptureTests.Contains($requiredPantryCaptureToken)) {
+            Fail "Pantry capture harness is missing $requiredPantryCaptureToken."
+        }
+    }
+    if (-not $pantryCaptureScript.Contains(
+            '-only-testing:PocketPetUITests/PocketPetPantryCaptureTests'
+        )) {
+        Fail 'Pantry capture script does not isolate the Pantry visual test.'
+    }
+    if (-not $publicVisualScript.Contains('POCKET_PET_VISUAL_SCRIPT')) {
+        Fail 'public visual runner cannot select the Pantry capture script.'
+    }
+    if (-not $workflow.Contains('run_pantry_capture')) {
+        Fail 'public workflow is missing the explicit Pantry capture gate.'
+    }
     foreach ($requiredHarnessToken in @(
         '--visual-state',
         '--visual-static',
@@ -394,9 +420,6 @@ try {
         }
     }
 
-    $uiCaptureTests = Get-Content -Raw (
-        'PocketPetApp\PocketPetUITests\PocketPetVisualCaptureTests.swift'
-    )
     $uiFrameTests = [regex]::Matches(
         $uiCaptureTests,
         '(?m)^\s*func testF\d{2}'

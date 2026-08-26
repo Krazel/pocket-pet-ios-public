@@ -17,6 +17,11 @@ on:
         required: true
         default: false
         type: boolean
+      run_pantry_capture:
+        description: Capture the approved Pantry reference state on iPhone 16 Pro
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -97,6 +102,30 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: pocket-pet-ios-runtime-qa-${{ github.sha }}
+          path: .verification-output/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14
+
+  pantry-capture:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_pantry_capture
+    needs: verify
+    runs-on: macos-26
+    timeout-minutes: 35
+    steps:
+      - name: Check out candidate
+        uses: actions/checkout@v5
+
+      - name: Capture the approved Pantry state
+        env:
+          POCKET_PET_VISUAL_SCRIPT: scripts/run-pantry-capture.sh
+        run: bash scripts/run-public-visual-verification.sh
+
+      - name: Preserve Pantry visual evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: pocket-pet-ios-pantry-${{ github.sha }}
           path: .verification-output/
           if-no-files-found: error
           include-hidden-files: true

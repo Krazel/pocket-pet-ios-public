@@ -861,3 +861,24 @@ final class PocketPetNormalMotionTimingTests: PocketPetRuntimeQATestCase {
         )
     }
 }
+
+/// Kept outside the immutable F01-F17 suite so the established zero-delta
+/// comparator remains stable while Pantry receives its first human-reviewed
+/// equal-size capture.
+final class PocketPetPantryCaptureTests: PocketPetRuntimeQATestCase {
+    func testP01ApprovedReferenceState() {
+        launch(scenario: "pantry")
+        require(app.staticTexts["Pantry Nook"])
+        require(app.descendants(matching: .any)["Bond level 2"])
+        require(app.descendants(matching: .any)["124 Sun Seeds"])
+        require(app.buttons["Dewberry"])
+        require(app.buttons["Seed Biscuit"])
+        require(app.buttons["Moss Melon"])
+        require(app.buttons["Offer Dewberry"])
+        require(app.buttons["Home"])
+        require(app.buttons["Pantry"])
+        settle(0.5)
+        attachScreen("P01-pantry-reference-raw")
+        attachHierarchy("P01-pantry-reference-semantics")
+    }
+}

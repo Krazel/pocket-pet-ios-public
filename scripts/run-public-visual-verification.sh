@@ -59,4 +59,5 @@ xcrun simctl status_bar "$simulator_udid" override \
 
 export POCKET_PET_UI_DESTINATION="platform=iOS Simulator,id=${simulator_udid}"
 export POCKET_PET_UI_UDID="${simulator_udid}"
-bash scripts/run-visual-captures.sh
+capture_script="${POCKET_PET_VISUAL_SCRIPT:-scripts/run-visual-captures.sh}"
+bash "$capture_script"
