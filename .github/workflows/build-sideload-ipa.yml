@@ -27,4 +27,5 @@ jobs:
           name: PocketPet-sideload-${{ github.sha }}
           path: .verification-output/*/sideload/
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 14
