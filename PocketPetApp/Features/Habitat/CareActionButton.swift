@@ -63,9 +63,12 @@ struct CareActionButton: View {
             .frame(maxWidth: .infinity, minHeight: 90)
             .padding(.vertical, 8)
             .background(
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(background.opacity(0.76))
-                    .stroke(.white.opacity(0.88), lineWidth: 1.5)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .fill(background.opacity(0.76))
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(.white.opacity(0.88), lineWidth: 1.5)
+                }
             )
         }
         .buttonStyle(.plain)

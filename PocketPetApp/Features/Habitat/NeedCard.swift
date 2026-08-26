@@ -83,9 +83,12 @@ struct NeedCard: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 7)
         .background(
-            RoundedRectangle(cornerRadius: 19, style: .continuous)
-                .fill(PocketPetColors.cardCream)
-                .stroke(PocketPetColors.outline, lineWidth: 1.2)
+            ZStack {
+                RoundedRectangle(cornerRadius: 19, style: .continuous)
+                    .fill(PocketPetColors.cardCream)
+                RoundedRectangle(cornerRadius: 19, style: .continuous)
+                    .stroke(PocketPetColors.outline, lineWidth: 1.2)
+            }
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)

@@ -112,15 +112,21 @@ struct HabitatSceneView: View {
 private struct SpeechBubbleBackground: View {
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            SpeechBubbleTail()
-                .fill(PocketPetColors.cardCream)
-                .stroke(PocketPetColors.outline, lineWidth: 1)
+            ZStack {
+                SpeechBubbleTail()
+                    .fill(PocketPetColors.cardCream)
+                SpeechBubbleTail()
+                    .stroke(PocketPetColors.outline, lineWidth: 1)
+            }
                 .frame(width: 28, height: 22)
                 .offset(x: 28, y: 10)
 
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .fill(PocketPetColors.cardCream)
-                .stroke(PocketPetColors.outline, lineWidth: 1)
+            ZStack {
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(PocketPetColors.cardCream)
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .stroke(PocketPetColors.outline, lineWidth: 1)
+            }
         }
         .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
     }
