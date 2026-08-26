@@ -1,10 +1,16 @@
 # Pocket Pet 0.1 runtime QA contract
 
-Status: partially executed on macOS/Xcode. Public run `32919057391` passed the
-shared build/test/analyze gate and F01-F17 acquisition/comparison at sanitized
-commit `03eb16ce33c91151b37004c439f003a9289b7e14`. Human composition review is
-accepted. D01-D10, V01-V08, R01-R04 and the real operating-system/durability
-smoke remain open.
+Status: automated macOS/Xcode portion passed. Public run `32979582655` passed
+the shared build/test/analyze gate plus D01-D10, V01-V08 semantic preflight,
+R01-R04 and N01-N03 at sanitized commit
+`1dcb87f986bef435a04eda1dae4b2bfa8c541ff7`. The matching private app-source
+commit is `95209ff`. The 24 AX5 screenshots and 18 reduced-motion screenshots
+were inspected after execution; the adaptive Home needs and Settings controls
+are readable and all required top/bottom content remains reachable. F01-F17
+composition review from run `32919057391` remains accepted because normal-size
+approved surfaces were not changed. Real VoiceOver speech/focus,
+Accessibility Inspector, Voice Control/Switch Control and the operating-system,
+durability and physical-device smoke remain open.
 
 This is the executable completion contract for the approved visual family. It
 does not turn source review, a generated reference or a Debug fixture into
@@ -131,6 +137,35 @@ attachments, logs and `runtime-motion.mp4`. This automated semantic preflight
 cannot claim VoiceOver speech/focus order, Voice Control, Switch Control or
 Accessibility Inspector evidence; those remain part of the real-device smoke.
 
+## Executed automated runtime gate
+
+Run `32979582655` on the public sanitized mirror recorded zero for every gate:
+
+```text
+swift test: 0
+xcodebuild: 0
+release analyze: 0
+D01-D10 Dynamic Type UI tests: 0
+V01-V08 semantic UI preflight: 0
+R01-R04 and normal-motion UI tests: 0
+xcresult attachment export: 0
+attachment inventory: 0
+simulator motion recording: 0
+```
+
+The retained runtime artifact contains 10 Dynamic Type tests with 24 PNGs,
+eight semantic tests with eight hierarchy attachments, four reduced-motion
+tests with 18 PNGs, three normal-motion sequences and a 49,149,504-byte
+`runtime-motion.mp4`. Every manifest entry records the same iPhone SE simulator
+and `isAssociatedWithFailure: false`. Evidence is downloaded under
+`.verification-work/public-runs/32979582655/`; generated contact sheets used
+for human review are in its `review/` directory.
+
+The earlier green run `32976386411` proved the harness but its AX5 screenshots
+revealed overly narrow Home cards. That visual evidence was rejected, the
+accessibility-only layout was corrected without changing normal-size approved
+surfaces, and the stricter D04 frame-width assertion now prevents regression.
+
 ## Canonical 1:1 frames
 
 These 17 frames correspond exactly to the 17 approved full-screen references.
@@ -246,7 +281,9 @@ The runtime gate passes only when:
    heatmap and machine-readable metric evidence;
 3. every visible difference is corrected or explicitly accepted without
    changing the approved promise;
-4. D01–D10, V01–V08 and R01–R04 are recorded and pass;
+4. D01-D10, the automated V01-V08 semantic preflight and R01-R04 are recorded
+   and pass, followed by the manual assistive-technology sequences this runner
+   cannot prove;
 5. the operating-system/durability smoke is recorded;
 6. every approved entry in `design/APPROVALS.md` links its current runtime
    evidence, and `docs/CANDIDATE_VERIFICATION.md` records the final result.
