@@ -518,7 +518,7 @@ public enum PetSpaceID: String, Codable, CaseIterable, Sendable {
 }
 
 public struct PocketPetGameState: Codable, Equatable, Sendable {
-    public static let currentSchemaVersion = 1
+    public static let currentSchemaVersion = 2
 
     public let gameSchemaVersion: Int
     public var pet: PetState
@@ -528,6 +528,8 @@ public struct PocketPetGameState: Codable, Equatable, Sendable {
     public var vitals: CompanionVitals
     public var location: PetSpaceID
     public var highScores: [String: Int]
+    public var keepsakes: KeepsakeCollection
+    public private(set) var processedCommandIDs: [UUID]
 
     public init(
         pet: PetState,
@@ -537,6 +539,8 @@ public struct PocketPetGameState: Codable, Equatable, Sendable {
         vitals: CompanionVitals,
         location: PetSpaceID = .sunnyPatio,
         highScores: [String: Int] = [:],
+        keepsakes: KeepsakeCollection = KeepsakeCollection(),
+        processedCommandIDs: [UUID] = [],
         gameSchemaVersion: Int = PocketPetGameState.currentSchemaVersion
     ) {
         self.gameSchemaVersion = gameSchemaVersion
@@ -547,6 +551,11 @@ public struct PocketPetGameState: Codable, Equatable, Sendable {
         self.vitals = vitals
         self.location = location
         self.highScores = highScores.mapValues { max(0, $0) }
+        self.keepsakes = keepsakes
+        var seenCommands = Set<UUID>()
+        self.processedCommandIDs = processedCommandIDs.filter {
+            seenCommands.insert($0).inserted
+        }
     }
 
     public init(migrating pet: PetState) {
@@ -578,8 +587,87 @@ public struct PocketPetGameState: Codable, Equatable, Sendable {
                 health: 100,
                 fullness: 100 - pet.needs.hunger,
                 bodyComfort: 100
-            )
+            ),
+            keepsakes: KeepsakeCollection(migrating: pet)
         )
+    }
+
+    public func hasProcessed(_ commandID: UUID) -> Bool {
+        processedCommandIDs.contains(commandID)
+    }
+
+    mutating func recordProcessed(_ commandID: UUID) {
+        guard !hasProcessed(commandID) else { return }
+        processedCommandIDs.append(commandID)
+        if processedCommandIDs.count > 128 {
+            processedCommandIDs.removeFirst(processedCommandIDs.count - 128)
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case gameSchemaVersion
+        case pet
+        case progression
+        case wallet
+        case inventory
+        case vitals
+        case location
+        case highScores
+        case keepsakes
+        case processedCommandIDs
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let decodedVersion = try container.decode(
+            Int.self,
+            forKey: .gameSchemaVersion
+        )
+        guard decodedVersion <= Self.currentSchemaVersion else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .gameSchemaVersion,
+                in: container,
+                debugDescription: "Unsupported future game-state schema."
+            )
+        }
+        self.init(
+            pet: try container.decode(PetState.self, forKey: .pet),
+            progression: try container.decode(
+                BondProgression.self,
+                forKey: .progression
+            ),
+            wallet: try container.decode(SunSeedWallet.self, forKey: .wallet),
+            inventory: try container.decode(ItemInventory.self, forKey: .inventory),
+            vitals: try container.decode(CompanionVitals.self, forKey: .vitals),
+            location: try container.decode(PetSpaceID.self, forKey: .location),
+            highScores: try container.decodeIfPresent(
+                [String: Int].self,
+                forKey: .highScores
+            ) ?? [:],
+            keepsakes: try container.decodeIfPresent(
+                KeepsakeCollection.self,
+                forKey: .keepsakes
+            ) ?? KeepsakeCollection(),
+            processedCommandIDs: try container.decodeIfPresent(
+                [UUID].self,
+                forKey: .processedCommandIDs
+            ) ?? [],
+            gameSchemaVersion: Self.currentSchemaVersion
+        )
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(gameSchemaVersion, forKey: .gameSchemaVersion)
+        try container.encode(pet, forKey: .pet)
+        try container.encode(progression, forKey: .progression)
+        try container.encode(wallet, forKey: .wallet)
+        try container.encode(inventory, forKey: .inventory)
+        try container.encode(vitals, forKey: .vitals)
+        try container.encode(location, forKey: .location)
+        try container.encode(highScores, forKey: .highScores)
+        try container.encode(keepsakes, forKey: .keepsakes)
+        try container.encode(processedCommandIDs, forKey: .processedCommandIDs)
     }
 }
 
@@ -712,7 +800,10 @@ public struct PocketPetGameEngine: Sendable {
         guard state.pet.stage != .egg else {
             throw PocketPetInteractionError.unavailableUntilHatched
         }
-        guard !state.wallet.hasProcessed(commandID) else { return state }
+        guard !state.hasProcessed(commandID),
+              !state.wallet.hasProcessed(commandID) else {
+            return state
+        }
         guard state.inventory.quantity(of: itemID) > 0 else {
             throw PocketPetInteractionError.outOfStock
         }
@@ -751,6 +842,11 @@ public struct PocketPetGameEngine: Sendable {
                 reason: "care.consume.\(itemID.rawValue)"
             )
         )
+        candidate.keepsakes.advance(.steadyCare)
+        if item.kind == .food {
+            candidate.keepsakes.advance(.firstSnack)
+        }
+        candidate.recordProcessed(commandID)
         return candidate
     }
 
@@ -785,7 +881,10 @@ public struct PocketPetGameEngine: Sendable {
         guard action != .rest else {
             throw PocketPetInteractionError.restRequiresNest
         }
-        guard !state.wallet.hasProcessed(commandID) else { return state }
+        guard !state.hasProcessed(commandID),
+              !state.wallet.hasProcessed(commandID) else {
+            return state
+        }
 
         var candidate = reconcile(state, using: petEngine)
         if action == .play {
@@ -814,6 +913,66 @@ public struct PocketPetGameEngine: Sendable {
                 reason: "care.action.\(action.rawValue)"
             )
         )
+        candidate.keepsakes.advance(.steadyCare)
+        if action == .play {
+            candidate.keepsakes.advance(.playfulPal)
+        } else if action == .clean {
+            candidate.keepsakes.advance(.freshFriend)
+        }
+        candidate.recordProcessed(commandID)
+        return candidate
+    }
+
+    public func performNestRest(
+        commandID: UUID,
+        using petEngine: PetEngine,
+        in state: PocketPetGameState
+    ) throws -> PocketPetGameState {
+        guard !state.hasProcessed(commandID) else { return state }
+
+        var candidate = reconcile(state, using: petEngine)
+        let wasResting = candidate.pet.isResting
+        candidate.pet = petEngine.perform(.rest, on: candidate.pet)
+        if !wasResting && candidate.pet.isResting {
+            let advance = candidate.progression.grantXP(2)
+            try candidate.wallet.apply(
+                SunSeedTransaction(
+                    id: commandID,
+                    kind: .earn,
+                    amount: 1 + advance.sunSeedReward,
+                    reason: "care.nest.start"
+                )
+            )
+            candidate.keepsakes.advance(.steadyCare)
+        }
+        candidate.recordProcessed(commandID)
+        return candidate
+    }
+
+    public func claimKeepsake(
+        _ id: KeepsakeID,
+        commandID: UUID,
+        in state: PocketPetGameState
+    ) throws -> PocketPetGameState {
+        guard !state.hasProcessed(commandID),
+              !state.wallet.hasProcessed(commandID) else {
+            return state
+        }
+        let record = state.keepsakes.record(for: id)
+        guard record.isUnlocked else { throw KeepsakeClaimError.locked }
+        guard !record.isClaimed else { throw KeepsakeClaimError.alreadyClaimed }
+
+        var candidate = state
+        candidate.keepsakes.claim(id)
+        try candidate.wallet.apply(
+            SunSeedTransaction(
+                id: commandID,
+                kind: .earn,
+                amount: id.sunSeedReward,
+                reason: "keepsake.claim.\(id.rawValue)"
+            )
+        )
+        candidate.recordProcessed(commandID)
         return candidate
     }
 
@@ -832,7 +991,10 @@ public struct PocketPetGameEngine: Sendable {
         guard state.vitals.health >= 20 else {
             throw PocketPetInteractionError.needsRecovery
         }
-        guard !state.wallet.hasProcessed(commandID) else { return state }
+        guard !state.hasProcessed(commandID),
+              !state.wallet.hasProcessed(commandID) else {
+            return state
+        }
 
         var candidate = state
         let previousHighScore = candidate.highScores[gameID.rawValue] ?? 0
@@ -853,6 +1015,11 @@ public struct PocketPetGameEngine: Sendable {
                 reason: "arcade.result.\(gameID.rawValue)"
             )
         )
+        candidate.keepsakes.advance(.arcadeHello)
+        if gameID == .berryCatch {
+            candidate.keepsakes.setProgress(.berryAce, to: score)
+        }
+        candidate.recordProcessed(commandID)
         return candidate
     }
 }

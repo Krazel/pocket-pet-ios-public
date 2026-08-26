@@ -142,6 +142,32 @@ final class PocketPetProgressionTests: XCTestCase {
         XCTAssertEqual(decoded, original)
     }
 
+    func testSchemaOneExpandedStateDefaultsNewDurableCollections() throws {
+        let original = PocketPetGameState(migrating: makeChild())
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .millisecondsSince1970
+        let encoded = try encoder.encode(original)
+        var object = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+        )
+        object["gameSchemaVersion"] = 1
+        object.removeValue(forKey: "keepsakes")
+        object.removeValue(forKey: "processedCommandIDs")
+        let legacyExpanded = try JSONSerialization.data(withJSONObject: object)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .millisecondsSince1970
+
+        let decoded = try decoder.decode(
+            PocketPetGameState.self,
+            from: legacyExpanded
+        )
+
+        XCTAssertEqual(decoded.gameSchemaVersion, 2)
+        XCTAssertTrue(decoded.keepsakes.records.isEmpty)
+        XCTAssertTrue(decoded.processedCommandIDs.isEmpty)
+        XCTAssertEqual(decoded.pet, original.pet)
+    }
+
     func testFoodConsumptionIsAtomicAndReplaySafe() throws {
         let state = PocketPetGameState(migrating: makeChild())
         let engine = PocketPetGameEngine()
@@ -391,6 +417,105 @@ final class PocketPetProgressionTests: XCTestCase {
         ) { error in
             XCTAssertEqual(error as? PocketPetInteractionError, .notEnoughEnergy)
         }
+    }
+
+    func testFoodAndArcadeAdvanceKeepsakes() throws {
+        let engine = PocketPetGameEngine()
+        let fed = try engine.consume(
+            itemID: .dewberry,
+            commandID: UUID(),
+            in: PocketPetGameState(migrating: makeChild())
+        )
+        let played = try engine.recordArcadeResult(
+            gameID: .berryCatch,
+            score: 1_250,
+            commandID: UUID(),
+            in: fed
+        )
+
+        XCTAssertTrue(played.keepsakes.record(for: .firstSnack).isUnlocked)
+        XCTAssertTrue(played.keepsakes.record(for: .arcadeHello).isUnlocked)
+        XCTAssertEqual(played.keepsakes.record(for: .berryAce).progress, 1_250)
+    }
+
+    func testUnlockedKeepsakeCanBeClaimedOnlyOnce() throws {
+        let engine = PocketPetGameEngine()
+        let unlocked = try engine.consume(
+            itemID: .dewberry,
+            commandID: UUID(),
+            in: PocketPetGameState(migrating: makeChild())
+        )
+        let commandID = UUID(
+            uuidString: "66666666-6666-6666-6666-666666666666"
+        )!
+
+        let claimed = try engine.claimKeepsake(
+            .firstSnack,
+            commandID: commandID,
+            in: unlocked
+        )
+        let replayed = try engine.claimKeepsake(
+            .firstSnack,
+            commandID: commandID,
+            in: claimed
+        )
+
+        XCTAssertTrue(claimed.keepsakes.record(for: .firstSnack).isClaimed)
+        XCTAssertEqual(
+            claimed.wallet.balance,
+            unlocked.wallet.balance + KeepsakeID.firstSnack.sunSeedReward
+        )
+        XCTAssertEqual(replayed, claimed)
+    }
+
+    func testLockedKeepsakeCannotBeClaimed() {
+        let state = PocketPetGameState(migrating: makeChild())
+
+        XCTAssertThrowsError(
+            try PocketPetGameEngine().claimKeepsake(
+                .berryAce,
+                commandID: UUID(),
+                in: state
+            )
+        ) { error in
+            XCTAssertEqual(error as? KeepsakeClaimError, .locked)
+        }
+    }
+
+    func testNestRestStartAndStopAreReplaySafe() throws {
+        let state = PocketPetGameState(migrating: makeChild())
+        let engine = PocketPetGameEngine()
+        let petEngine = PetEngine(
+            clock: ProgressionTestClock(now: state.pet.lastReconciledAt)
+        )
+        let startID = UUID(
+            uuidString: "77777777-7777-7777-7777-777777777777"
+        )!
+        let stopID = UUID(
+            uuidString: "88888888-8888-8888-8888-888888888888"
+        )!
+
+        let resting = try engine.performNestRest(
+            commandID: startID,
+            using: petEngine,
+            in: state
+        )
+        let replayed = try engine.performNestRest(
+            commandID: startID,
+            using: petEngine,
+            in: resting
+        )
+        let awake = try engine.performNestRest(
+            commandID: stopID,
+            using: petEngine,
+            in: resting
+        )
+
+        XCTAssertTrue(resting.pet.isResting)
+        XCTAssertEqual(resting.wallet.balance, state.wallet.balance + 1)
+        XCTAssertEqual(replayed, resting)
+        XCTAssertFalse(awake.pet.isResting)
+        XCTAssertEqual(awake.wallet.balance, resting.wallet.balance)
     }
 
     private func makeChild(energy: Double = 80) -> PetState {

@@ -16,7 +16,7 @@ final class PocketPetGamePersistenceTests: XCTestCase {
         let migrated = try XCTUnwrap(store.load())
 
         XCTAssertEqual(migrated.pet, legacy)
-        XCTAssertEqual(migrated.gameSchemaVersion, 1)
+        XCTAssertEqual(migrated.gameSchemaVersion, 2)
         XCTAssertEqual(try Data(contentsOf: store.fileURL), legacyData)
     }
 
@@ -52,7 +52,7 @@ final class PocketPetGamePersistenceTests: XCTestCase {
         XCTAssertThrowsError(try store.load()) { error in
             XCTAssertEqual(
                 error as? PocketPetGamePersistenceError,
-                .unsupportedGameSchema(found: 99, latest: 1)
+                .unsupportedGameSchema(found: 99, latest: 2)
             )
         }
     }
