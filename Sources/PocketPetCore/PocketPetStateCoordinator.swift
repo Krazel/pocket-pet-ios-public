@@ -8,6 +8,7 @@ public enum PocketPetDestination: Equatable, Sendable {
 
 public struct PocketPetSnapshot: Equatable, Sendable {
     public let pet: PetState?
+    public let gameState: PocketPetGameState?
     public let preferences: PocketPetPreferences
     public let destination: PocketPetDestination
 
@@ -232,6 +233,7 @@ public actor PocketPetStateCoordinator {
     private func makeSnapshot() -> PocketPetSnapshot {
         PocketPetSnapshot(
             pet: petState,
+            gameState: nil,
             preferences: preferences,
             destination: Self.destination(for: petState)
         )

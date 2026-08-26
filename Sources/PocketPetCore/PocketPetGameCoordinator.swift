@@ -5,9 +5,11 @@ public enum PocketPetGameCoordinatorError: Error, Equatable, Sendable {
     case notStarted
 }
 
-/// Serialized owner for the expanded aggregate. Every returned state has
-/// already been saved; failed writes never replace the in-memory last-known
-/// good state.
+/// Lower-level expanded aggregate coordinator retained for focused domain
+/// tests. Production app flows use `PocketPetExpandedStateCoordinator` as the
+/// single serialized owner so two in-memory caches never write the same file.
+/// Every returned state has already been saved; failed writes never replace
+/// the in-memory last-known good state.
 public actor PocketPetGameCoordinator {
     private let store: any PocketPetGameStatePersisting
     private let petEngine: PetEngine

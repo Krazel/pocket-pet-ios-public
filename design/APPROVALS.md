@@ -1,4 +1,4 @@
-# Pocket Pet public visual register
+﻿# Pocket Pet public visual register
 
 These are the immutable reference assets used by the automated visual gate.
 

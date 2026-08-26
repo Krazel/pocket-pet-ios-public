@@ -84,7 +84,7 @@ private actor PocketPetVisualReminderScheduler: LocalReminderScheduling {
 
 private struct PocketPetVisualHarness {
     let scenario: PocketPetVisualScenario
-    let coordinator: PocketPetStateCoordinator
+    let coordinator: PocketPetExpandedStateCoordinator
     let reminderScheduler: any LocalReminderScheduling
 }
 #endif
@@ -104,12 +104,13 @@ enum ReminderEnableOutcome {
 }
 
 /// Main-actor presentation adapter around the serialized Foundation owner.
-/// Essential state is committed by `PocketPetStateCoordinator` before this
-/// object publishes feedback to SwiftUI or SpriteKit.
+/// Essential state is committed by `PocketPetExpandedStateCoordinator` before
+/// this object publishes feedback to SwiftUI or SpriteKit.
 @MainActor
 final class PocketPetAppModel: ObservableObject {
     @Published private(set) var presentation: PocketPetPresentation = .loading
     @Published private(set) var pet: PetState?
+    @Published private(set) var gameState: PocketPetGameState?
     @Published private(set) var lastReaction: CareAction?
     @Published private(set) var reactionSequence = 0
     @Published private(set) var petTapSequence = 0
@@ -127,7 +128,7 @@ final class PocketPetAppModel: ObservableObject {
     @Published private(set) var settingsError: String?
     @Published private(set) var appError: String?
 
-    private let coordinator: PocketPetStateCoordinator
+    private let coordinator: PocketPetExpandedStateCoordinator
     private let reminderScheduler: any LocalReminderScheduling
     private var hasBootstrapped = false
     private var stateOperationTail: Task<Void, Never>?
@@ -777,6 +778,7 @@ final class PocketPetAppModel: ObservableObject {
         }
         #endif
         pet = snapshot.pet
+        gameState = snapshot.gameState
 
         guard let state = snapshot.pet else {
             clearReaction()
@@ -889,20 +891,20 @@ final class PocketPetAppModel: ObservableObject {
         }
     }
 
-    private static func makeCoordinator() -> PocketPetStateCoordinator {
+    private static func makeCoordinator() -> PocketPetExpandedStateCoordinator {
         let base = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
         ).first ?? FileManager.default.temporaryDirectory
         let folder = base.appendingPathComponent("PocketPet", isDirectory: true)
-        let petStore = JSONFilePetStateStore(
+        let gameStore = JSONFilePocketPetGameStateStore(
             fileURL: folder.appendingPathComponent("pet-state.json")
         )
         let preferencesStore = JSONFilePocketPetPreferencesStore(
             fileURL: folder.appendingPathComponent("preferences.json")
         )
-        return PocketPetStateCoordinator(
-            petStore: petStore,
+        return PocketPetExpandedStateCoordinator(
+            gameStore: gameStore,
             preferencesStore: preferencesStore
         )
     }
@@ -946,20 +948,23 @@ final class PocketPetAppModel: ObservableObject {
             withIntermediateDirectories: true
         )
 
-        let petStore = JSONFilePetStateStore(
+        let legacyPetStore = JSONFilePetStateStore(
             fileURL: folder.appendingPathComponent("pet-state.json")
         )
         let preferencesStore = JSONFilePocketPetPreferencesStore(
             fileURL: folder.appendingPathComponent("preferences.json")
         )
         if let pet = makeVisualPet(for: scenario) {
-            try petStore.save(pet)
+            try legacyPetStore.save(pet)
         }
         try preferencesStore.save(makeVisualPreferences(for: scenario))
 
-        let coordinator = PocketPetStateCoordinator(
-            engine: PetEngine(clock: PocketPetVisualClock(now: visualNow)),
-            petStore: petStore,
+        let gameStore = JSONFilePocketPetGameStateStore(
+            fileURL: folder.appendingPathComponent("pet-state.json")
+        )
+        let coordinator = PocketPetExpandedStateCoordinator(
+            petEngine: PetEngine(clock: PocketPetVisualClock(now: visualNow)),
+            gameStore: gameStore,
             preferencesStore: preferencesStore
         )
         let scheduler = PocketPetVisualReminderScheduler(

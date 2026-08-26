@@ -314,6 +314,24 @@ try {
     }
 
     $appModel = Get-Content -Raw 'PocketPetApp\App\PocketPetAppModel.swift'
+    $expandedCoordinator = Get-Content -Raw (
+        'Sources\PocketPetCore\PocketPetExpandedStateCoordinator.swift'
+    )
+    foreach ($requiredExpandedStateToken in @(
+        'PocketPetExpandedStateCoordinator',
+        'JSONFilePocketPetGameStateStore',
+        'gameState = snapshot.gameState'
+    )) {
+        if (-not (
+                $appModel.Contains($requiredExpandedStateToken) -or
+                $expandedCoordinator.Contains($requiredExpandedStateToken)
+            )) {
+            Fail "expanded app-state integration is missing $requiredExpandedStateToken."
+        }
+    }
+    if ($appModel.Contains('private let coordinator: PocketPetStateCoordinator')) {
+        Fail 'the production app still owns the legacy-only coordinator.'
+    }
     foreach ($requiredHarnessToken in @(
         '--visual-state',
         '--visual-static',
