@@ -18,6 +18,7 @@ struct WelcomeEggView: View {
     @State private var hasEditedName = false
     @State private var hasAttemptedSubmit = false
     @State private var isBreathing = false
+    @State private var lastAnnouncedNameError: String?
 
     init(
         initialName: String,
@@ -140,7 +141,7 @@ struct WelcomeEggView: View {
                     .frame(minHeight: proxy.size.height, alignment: .top)
                 }
                 .scrollDismissesKeyboard(.interactively)
-                .onChange(of: nameFieldIsFocused) { _, isFocused in
+                .onChange(of: nameFieldIsFocused) { isFocused in
                     if isFocused {
                         withAnimation(.easeOut(duration: 0.2)) {
                             scrollProxy.scrollTo("name-entry", anchor: .center)
@@ -156,22 +157,24 @@ struct WelcomeEggView: View {
                 .ignoresSafeArea()
                 .accessibilityHidden(true)
         }
-        .onChange(of: petName) { _, newName in
+        .onChange(of: petName) { newName in
             guard !(nameIsPersisted && newName == initialName) else { return }
             hasEditedName = true
             onNameChanged()
         }
-        .onChange(of: initialName) { _, savedName in
+        .onChange(of: initialName) { savedName in
             guard nameIsPersisted else { return }
             petName = savedName
             hasEditedName = false
             hasAttemptedSubmit = false
+            lastAnnouncedNameError = nil
         }
-        .onChange(of: nameError) { oldError, newError in
-            guard hasEditedName, oldError != newError else { return }
+        .onChange(of: nameError) { newError in
+            guard hasEditedName, lastAnnouncedNameError != newError else { return }
+            lastAnnouncedNameError = newError
             announce(newError)
         }
-        .onChange(of: externalError) { _, error in
+        .onChange(of: externalError) { error in
             announce(error)
         }
     }

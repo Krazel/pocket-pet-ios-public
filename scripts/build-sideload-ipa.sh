@@ -33,6 +33,12 @@ if [[ ! -d "$app_path" ]]; then
   exit 1
 fi
 
+minimum_os="$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$app_path/Info.plist")"
+if [[ "$minimum_os" != "16.4" ]]; then
+  printf 'Expected MinimumOSVersion 16.4, found %s\n' "$minimum_os" >&2
+  exit 1
+fi
+
 ditto "$app_path" "$payload_root/Payload/PocketPet.app"
 ipa_path="$output_root/PocketPet-0.1-build-1-unsigned.ipa"
 ditto -c -k --sequesterRsrc --keepParent "$payload_root/Payload" "$ipa_path"
@@ -42,6 +48,7 @@ ditto -c -k --sequesterRsrc --keepParent "$payload_root/Payload" "$ipa_path"
   printf 'Commit: %s\n' "$(git rev-parse HEAD)"
   printf 'Bundle: com.krazel.pocketpet\n'
   printf 'Version: 0.1 (1)\n'
+  printf 'Minimum iOS: %s\n' "$minimum_os"
   printf 'Signing: unsigned; sign locally with Sideloadly or equivalent\n'
   printf 'IPA SHA-256: %s\n' "$(shasum -a 256 "$ipa_path" | awk '{print $1}')"
 } | tee "$output_root/BUILD-INFO.txt"

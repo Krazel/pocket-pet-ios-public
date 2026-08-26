@@ -135,7 +135,7 @@ private struct RemindersEnabledView: View {
                 .padding(.top, 10)
             }
         }
-        .onChange(of: selectedTime) { _, newValue in
+        .onChange(of: selectedTime) { newValue in
             model.setReminderTime(from: newValue)
         }
     }

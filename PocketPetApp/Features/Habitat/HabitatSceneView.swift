@@ -10,6 +10,7 @@ struct HabitatSceneView: View {
     @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var scene = SunnyPatioScene()
+    @State private var previousState: HabitatViewState?
 
     var body: some View {
         GeometryReader { geometry in
@@ -46,14 +47,16 @@ struct HabitatSceneView: View {
         .onAppear {
             scene.setReduceMotion(systemReduceMotion || prefersReducedMotion)
             scene.apply(stage: state.stage, condition: state.condition)
+            previousState = state
         }
-        .onChange(of: systemReduceMotion) { _, value in
+        .onChange(of: systemReduceMotion) { value in
             scene.setReduceMotion(value || prefersReducedMotion)
         }
-        .onChange(of: prefersReducedMotion) { _, value in
+        .onChange(of: prefersReducedMotion) { value in
             scene.setReduceMotion(value || systemReduceMotion)
         }
-        .onChange(of: state) { previous, current in
+        .onChange(of: state) { current in
+            let previous = previousState ?? current
             if previous.stage != current.stage
                 || previous.condition != current.condition {
                 scene.apply(
@@ -72,8 +75,9 @@ struct HabitatSceneView: View {
                     argument: current.speech
                 )
             }
+            previousState = current
         }
-        .onChange(of: state.petTapSequence) { _, _ in
+        .onChange(of: state.petTapSequence) { _ in
             scene.acknowledgePetTap()
         }
     }

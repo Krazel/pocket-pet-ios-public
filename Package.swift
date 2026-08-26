@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PocketPetCore",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v16),
     ],
     products: [
         .library(name: "PocketPetCore", targets: ["PocketPetCore"]),

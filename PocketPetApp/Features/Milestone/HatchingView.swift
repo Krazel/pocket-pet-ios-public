@@ -89,7 +89,7 @@ struct HatchingView: View {
                 argument: "Hello, \(petName)! Your little friend is ready."
             )
         }
-        .onChange(of: externalError) { _, message in
+        .onChange(of: externalError) { message in
             guard let message else { return }
             UIAccessibility.post(notification: .announcement, argument: message)
         }

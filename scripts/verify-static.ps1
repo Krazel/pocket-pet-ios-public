@@ -431,6 +431,20 @@ try {
     ) {
         Fail 'Debug and Release must use the supported Swift 5 language mode.'
     }
+    $deploymentTargets = @(
+        [regex]::Matches($pbx, 'IPHONEOS_DEPLOYMENT_TARGET = ([^;]+);') |
+            ForEach-Object { $_.Groups[1].Value }
+    )
+    if (
+        $deploymentTargets.Count -ne 4 -or
+        @($deploymentTargets | Where-Object { $_ -ne '16.4' }).Count -ne 0
+    ) {
+        Fail 'all app and test build configurations must target iOS 16.4.'
+    }
+    $packageManifest = Get-Content -Raw 'Package.swift'
+    if (-not $packageManifest.Contains('.iOS(.v16)')) {
+        Fail 'PocketPetCore must support the iOS 16 product baseline.'
+    }
 
     $projectFiles = @(Get-ChildItem 'PocketPetApp' -Recurse -File)
     $looseSwiftUIImages = @(
