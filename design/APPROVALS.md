@@ -20,6 +20,7 @@ These are the immutable reference assets used by the automated visual gate.
 | `design/approved/reminder-pre-permission-garden-cards-v1.png` | `b2eba7b326be93fd47f6db785b535a2b80c6eaa3d51f8d54baa1a22b29cf4168` |
 | `design/approved/reminders-denied-garden-cards-v1.png` | `af271873e1b6185f364d13828d7f2cd2e954fc4334c1be56514abc1d83f20c12` |
 | `design/approved/reminders-enabled-garden-cards-v1.png` | `2ba477dfd4d4f2b82fa22d62ca6b8a2bd4117e00b4fd36129a80f2595a009ac6` |
+| `design/approved/room-system-garden-ribbon-v1.png` | `05d4f7ef4e27c2d76baab39c7f2b61465ae0236b10ce55dcae8480b8e648ec2e` |
 | `design/approved/settings-main-garden-cards-v1.png` | `eb7c29288295a28c5cad9bc310debf35d99099122a6845671ac3ec667c182b64` |
 | `design/approved/support-development-info-garden-cards-v1.png` | `d4669efae75d7afab12c198127982a51b66211ff44ae81787f973856157b7324` |
 | `design/approved/support-unavailable-garden-cards-v1.png` | `abafbe4673c1de67e33df824f5aed77ae70fba564435b0970645777dc6ad8c85` |
