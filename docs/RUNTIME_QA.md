@@ -1,6 +1,10 @@
 # Pocket Pet 0.1 runtime QA contract
 
-Status: pending execution on macOS/Xcode.
+Status: partially executed on macOS/Xcode. Public run `32919057391` passed the
+shared build/test/analyze gate and F01-F17 acquisition/comparison at sanitized
+commit `03eb16ce33c91151b37004c439f003a9289b7e14`. Human composition review is
+accepted. D01-D10, V01-V08, R01-R04 and the real operating-system/durability
+smoke remain open.
 
 This is the executable completion contract for the approved visual family. It
 does not turn source review, a generated reference or a Debug fixture into
@@ -44,7 +48,7 @@ The Debug app target accepts one isolated launch argument:
 --visual-state <scenario>
 ```
 
-Supported scenarios are `welcome-ready`, `hatching`, `child-comfortable`,
+Supported scenarios are `welcome-empty`, `welcome-ready`, `hatching`, `child-comfortable`,
 `child-needs-care`, `child-sleeping`, `adult-evolution`, `adult-comfortable`,
 `adult-needs-care`, `adult-sleeping`, `settings-off`, `settings-on` and
 `settings-denied`.
@@ -62,6 +66,14 @@ uses a fixed clock, valid PetState/Preferences input, the real coordinator and
 routing, and a fake local-reminder adapter. It cannot read or write the ordinary
 Application Support save. Release excludes the parser, fixtures, fake scheduler
 and fixed clock with `#if DEBUG`; launch arguments have no product behavior.
+
+The separate opt-in runtime QA suite uses three additional Debug-only controls:
+`--runtime-qa-system-reduce-motion` injects the same SwiftUI environment value
+that the system setting supplies, `--runtime-qa-local-reduce-motion` persists
+the app's own preference in the isolated fixture, and
+`--runtime-qa-extended-reactions` keeps response copy observable for UI
+assertions. None exists in Release. The environment injection verifies app
+response to the value but does not replace the real system-toggle smoke below.
 
 F01–F05 and F07–F10 start directly from the matching scenario. For F06, start
 `child-comfortable` and tap the real Feed control. For F11–F17, start from the
@@ -107,6 +119,15 @@ The public GitHub workflow exposes this as the explicit
 `run_visual_captures` input, default `false`, so ordinary pushes run the faster
 compile/test/analysis gate while a deliberate dispatch runs the complete
 simulator comparison suite.
+
+The same workflow exposes a separate `run_runtime_qa` input, also default
+`false`. It creates an iPhone SE (3rd generation), runs D01-D10 at AX5, returns
+to the default content size for V01-V08 semantic preflight, then records the
+simulator while exercising R01-R04 and N01-N03 normal-motion timing. The job
+preserves three `.xcresult` bundles, screenshots, accessibility hierarchy
+attachments, logs and `runtime-motion.mp4`. This automated semantic preflight
+cannot claim VoiceOver speech/focus order, Voice Control, Switch Control or
+Accessibility Inspector evidence; those remain part of the real-device smoke.
 
 ## Canonical 1:1 frames
 
@@ -228,5 +249,5 @@ The runtime gate passes only when:
 6. every approved entry in `design/APPROVALS.md` links its current runtime
    evidence, and `docs/CANDIDATE_VERIFICATION.md` records the final result.
 
-Until all six conditions are true, Pocket Pet is a static candidate, not a
-visually verified iOS candidate.
+Until all six conditions are true, Pocket Pet remains a compile-and-visual
+pre-candidate rather than the fully verified iOS candidate.

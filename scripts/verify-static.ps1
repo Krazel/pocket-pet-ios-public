@@ -108,6 +108,43 @@ try {
         }
     }
 
+    $runtimeGate = Get-Content -Raw 'scripts\run-runtime-qa.sh'
+    foreach ($requiredRuntimeToken in @(
+        'PocketPetAccessibility.xcresult',
+        'PocketPetSemantics.xcresult',
+        'PocketPetMotion.xcresult',
+        'PocketPetDynamicTypeTests',
+        'PocketPetSemanticAccessibilityTests',
+        'PocketPetReduceMotionTests',
+        'PocketPetNormalMotionTimingTests',
+        'accessibility-extra-extra-extra-large',
+        'xcresulttool export attachments',
+        'recordVideo',
+        'runtime-motion.mp4'
+    )) {
+        if (-not $runtimeGate.Contains($requiredRuntimeToken)) {
+            Fail "runtime QA gate is missing $requiredRuntimeToken."
+        }
+    }
+    $publicRuntimeGate = Get-Content -Raw (
+        'scripts\run-public-runtime-verification.sh'
+    )
+    foreach ($requiredPublicRuntimeToken in @(
+        'com.apple.CoreSimulator.SimDeviceType.iPhone-SE-3rd-generation',
+        'simctl create',
+        'simctl bootstatus',
+        'simctl status_bar',
+        "--time '9:41'",
+        'POCKET_PET_UI_DESTINATION',
+        'POCKET_PET_UI_UDID',
+        'run-runtime-qa.sh',
+        'trap cleanup_simulator EXIT'
+    )) {
+        if (-not $publicRuntimeGate.Contains($requiredPublicRuntimeToken)) {
+            Fail "public runtime QA gate is missing $requiredPublicRuntimeToken."
+        }
+    }
+
     $runtimeQA = Get-Content -Raw 'docs\RUNTIME_QA.md'
     $visualComparator = Get-Content -Raw 'scripts\compare-visual-captures.swift'
     foreach ($manifestToken in @(
@@ -188,8 +225,8 @@ try {
     if ([regex]::Matches(
             $workflow,
             'include-hidden-files: true'
-        ).Count -ne 2) {
-        Fail 'both public jobs must include hidden verification evidence.'
+        ).Count -ne 3) {
+        Fail 'all three public jobs must include hidden verification evidence.'
     }
     if (-not $workflow.Contains('actions/checkout@v5') -or
         -not $workflow.Contains('runs-on: macos-26')) {
@@ -197,6 +234,9 @@ try {
     }
     if (-not $workflow.Contains('run_visual_captures:')) {
         Fail 'manual workflow does not expose the visual capture input.'
+    }
+    if (-not $workflow.Contains('run_runtime_qa:')) {
+        Fail 'manual workflow does not expose the runtime QA input.'
     }
     if (-not $workflow.Contains('default: false')) {
         Fail 'visual capture input must remain explicitly opt-in.'
@@ -212,6 +252,11 @@ try {
             'bash scripts/run-public-visual-verification.sh'
         )) {
         Fail 'public workflow does not provision its deterministic simulator.'
+    }
+    if (-not $workflow.Contains(
+            'bash scripts/run-public-runtime-verification.sh'
+        )) {
+        Fail 'public workflow does not provision its runtime QA simulator.'
     }
 
     $testFlightWorkflow = Get-Content -Raw (
@@ -272,6 +317,8 @@ try {
     foreach ($requiredHarnessToken in @(
         '--visual-state',
         '--visual-static',
+        '--runtime-qa-local-reduce-motion',
+        'welcome-empty',
         'PocketPetVisualClock',
         'PocketPetVisualHarness',
         'temporaryDirectory'
@@ -310,6 +357,30 @@ try {
     }
     if (@($rawCaptureNames | Sort-Object -Unique).Count -ne 17) {
         Fail 'UI capture attachment names are not unique.'
+    }
+    $dynamicTypeTests = [regex]::Matches(
+        $uiCaptureTests,
+        '(?m)^\s*func testD\d{2}'
+    ).Count
+    $semanticTests = [regex]::Matches(
+        $uiCaptureTests,
+        '(?m)^\s*func testV\d{2}'
+    ).Count
+    $reduceMotionTests = [regex]::Matches(
+        $uiCaptureTests,
+        '(?m)^\s*func testR\d{2}'
+    ).Count
+    $normalMotionTests = [regex]::Matches(
+        $uiCaptureTests,
+        '(?m)^\s*func testN\d{2}'
+    ).Count
+    if ($dynamicTypeTests -ne 10 -or $semanticTests -ne 8 -or
+        $reduceMotionTests -ne 4 -or $normalMotionTests -ne 3) {
+        Fail (
+            'runtime UI suite must declare D01-D10, V01-V08, R01-R04 ' +
+            "and N01-N03; found D=$dynamicTypeTests V=$semanticTests " +
+            "R=$reduceMotionTests N=$normalMotionTests."
+        )
     }
     foreach ($exactPNGToken in @(
         'let png = screenshot.pngRepresentation',
@@ -523,10 +594,15 @@ try {
     Write-Output "PASS: $($stageAssets.Count) stage badge asset hashes verified"
     Write-Output 'PASS: shared manual macOS evidence gate is wired'
     Write-Output 'PASS: opt-in UI capture evidence gate is wired'
+    Write-Output 'PASS: opt-in runtime QA evidence gate is wired'
     Write-Output 'PASS: zero-tolerance visual comparison evidence is wired'
     Write-Output "PASS: $runtimeFrames canonical runtime frames are specified"
     Write-Output 'PASS: isolated DEBUG visual harness is present'
     Write-Output "PASS: $uiFrameTests deterministic UI capture tests are declared"
+    Write-Output (
+        "PASS: D=$dynamicTypeTests V=$semanticTests " +
+        "R=$reduceMotionTests N=$normalMotionTests runtime UI tests declared"
+    )
     Write-Output 'PASS: no prohibited product capability or core UI import found'
 } finally {
     Pop-Location

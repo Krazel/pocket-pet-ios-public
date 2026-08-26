@@ -12,6 +12,11 @@ on:
         required: true
         default: false
         type: boolean
+      run_runtime_qa:
+        description: Run Dynamic Type, semantic accessibility, and motion QA
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -70,6 +75,28 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: pocket-pet-ios-visual-${{ github.sha }}
+          path: .verification-output/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14
+
+  runtime-qa:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_runtime_qa
+    needs: verify
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Check out candidate
+        uses: actions/checkout@v5
+
+      - name: Exercise accessibility, text, and motion runtime gates
+        run: bash scripts/run-public-runtime-verification.sh
+
+      - name: Preserve runtime QA evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: pocket-pet-ios-runtime-qa-${{ github.sha }}
           path: .verification-output/
           if-no-files-found: error
           include-hidden-files: true

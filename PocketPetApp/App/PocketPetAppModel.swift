@@ -6,6 +6,7 @@ import UIKit
 
 #if DEBUG
 private enum PocketPetVisualScenario: String, CaseIterable {
+    case welcomeEmpty = "welcome-empty"
     case welcomeReady = "welcome-ready"
     case hatching
     case childComfortable = "child-comfortable"
@@ -810,7 +811,12 @@ final class PocketPetAppModel: ObservableObject {
         // XCTest waits for the application to become idle after a tap. Keep the
         // approved response frame observable only in the deterministic capture
         // harness; production feedback still expires after exactly one second.
-        visibilityNanoseconds = usesStaticVisualCapture
+        visibilityNanoseconds = (
+            usesStaticVisualCapture
+                || ProcessInfo.processInfo.arguments.contains(
+                    "--runtime-qa-extended-reactions"
+                )
+        )
             ? 5_000_000_000
             : 1_000_000_000
         #else
@@ -943,7 +949,9 @@ final class PocketPetAppModel: ObservableObject {
         let preferencesStore = JSONFilePocketPetPreferencesStore(
             fileURL: folder.appendingPathComponent("preferences.json")
         )
-        try petStore.save(makeVisualPet(for: scenario))
+        if let pet = makeVisualPet(for: scenario) {
+            try petStore.save(pet)
+        }
         try preferencesStore.save(makeVisualPreferences(for: scenario))
 
         let coordinator = PocketPetStateCoordinator(
@@ -964,27 +972,38 @@ final class PocketPetAppModel: ObservableObject {
     private static func makeVisualPreferences(
         for scenario: PocketPetVisualScenario
     ) -> PocketPetPreferences {
+        let reduceMotionEnabled = ProcessInfo.processInfo.arguments.contains(
+            "--runtime-qa-local-reduce-motion"
+        )
         switch scenario {
         case .settingsOn:
             return PocketPetPreferences(
+                reduceMotionEnabled: reduceMotionEnabled,
                 remindersEnabled: true,
                 reminderInvitationShown: true,
                 foregroundSessionCount: 3
             )
         case .settingsOff, .settingsDenied:
             return PocketPetPreferences(
+                reduceMotionEnabled: reduceMotionEnabled,
                 remindersEnabled: false,
                 reminderInvitationShown: true,
                 foregroundSessionCount: 3
             )
         default:
-            return .defaults
+            return PocketPetPreferences(
+                reduceMotionEnabled: reduceMotionEnabled
+            )
         }
     }
 
     private static func makeVisualPet(
         for scenario: PocketPetVisualScenario
-    ) -> PetState {
+    ) -> PetState? {
+        if scenario == .welcomeEmpty {
+            return nil
+        }
+
         guard let petID = UUID(
             uuidString: "50504950-0000-4000-8000-000000000001"
         ) else {

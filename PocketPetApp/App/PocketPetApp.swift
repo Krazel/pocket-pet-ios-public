@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 @main
@@ -53,6 +54,7 @@ struct PocketPetApp: App {
                 }
             }
             .background(PocketPetColors.cream.ignoresSafeArea())
+            .pocketPetRuntimeQAEnvironment()
             .preferredColorScheme(.light)
             .alert(
                 "Pocket Pet needs a moment",
@@ -82,12 +84,30 @@ struct PocketPetApp: App {
                     model: model,
                     onClose: model.dismissSettings
                 )
+                .pocketPetRuntimeQAEnvironment()
                 .preferredColorScheme(.light)
             }
         }
         .onChange(of: scenePhase) { _, phase in
             model.handleScenePhase(phase)
         }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func pocketPetRuntimeQAEnvironment() -> some View {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains(
+            "--runtime-qa-system-reduce-motion"
+        ) {
+            environment(\.accessibilityReduceMotion, true)
+        } else {
+            self
+        }
+        #else
+        self
+        #endif
     }
 }
 
