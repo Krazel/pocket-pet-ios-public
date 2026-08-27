@@ -38,16 +38,22 @@ if [[ "$minimum_os" != "16.4" ]]; then
   printf 'Expected MinimumOSVersion 16.4, found %s\n' "$minimum_os" >&2
   exit 1
 fi
+app_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_path/Info.plist")"
+build_number="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app_path/Info.plist")"
+if [[ "$app_version" != "0.2" || "$build_number" != "1" ]]; then
+  printf 'Expected Pocket Pet 0.2 (1), found %s (%s)\n' "$app_version" "$build_number" >&2
+  exit 1
+fi
 
 ditto "$app_path" "$payload_root/Payload/PocketPet.app"
-ipa_path="$output_root/PocketPet-0.1-build-1-unsigned.ipa"
+ipa_path="$output_root/PocketPet-${app_version}-build-${build_number}-iOS16-unsigned.ipa"
 ditto -c -k --sequesterRsrc --keepParent "$payload_root/Payload" "$ipa_path"
 
 {
   printf 'Pocket Pet sideload build\n'
   printf 'Commit: %s\n' "$(git rev-parse HEAD)"
   printf 'Bundle: com.krazel.pocketpet\n'
-  printf 'Version: 0.1 (1)\n'
+  printf 'Version: %s (%s)\n' "$app_version" "$build_number"
   printf 'Minimum iOS: %s\n' "$minimum_os"
   printf 'Signing: unsigned; sign locally with Sideloadly or equivalent\n'
   printf 'IPA SHA-256: %s\n' "$(shasum -a 256 "$ipa_path" | awk '{print $1}')"
