@@ -871,6 +871,9 @@ final class PocketPetPantryCaptureTests: PocketPetRuntimeQATestCase {
         require(app.staticTexts["Pip's Habitat"])
         let pantry = app.buttons["Pantry"]
         require(pantry)
+        XCTAssertFalse(app.buttons["Wash"].exists)
+        XCTAssertFalse(app.buttons["Play"].exists)
+        XCTAssertFalse(app.buttons["Nest"].exists)
         settle(0.5)
         attachScreen("P00-home-visible-room-ribbon")
         pantry.tap()

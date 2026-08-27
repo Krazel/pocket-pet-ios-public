@@ -66,6 +66,13 @@ struct PantryNookView: View {
             header
                 .padding(.horizontal, 21)
 
+            RoomRibbon(
+                currentRoom: .pantryNook,
+                isTransitioning: isRoomTransitionInFlight,
+                onMove: onMove
+            )
+            .padding(.horizontal, 12)
+
             statusChips
                 .padding(.horizontal, 58)
 
@@ -94,34 +101,7 @@ struct PantryNookView: View {
             foodStrip
                 .padding(.horizontal, 12)
 
-            RoomRibbon(
-                currentRoom: .pantryNook,
-                isTransitioning: isRoomTransitionInFlight,
-                onMove: onMove
-            )
-            .padding(.horizontal, 12)
-
-            Button(action: {}) {
-                HStack(spacing: 8) {
-                    PocketPetArtwork("icon_room_more")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 25, height: 25)
-                        .accessibilityHidden(true)
-                    Text("More")
-                }
-                .font(.system(.headline, design: .rounded, weight: .bold))
-                .foregroundStyle(PocketPetColors.evergreen)
-                .frame(minWidth: 150, minHeight: 38)
-                .background(Capsule().fill(PocketPetColors.cardCream))
-                .overlay {
-                    Capsule().stroke(PocketPetColors.outline, lineWidth: 1.2)
-                }
-            }
-            .buttonStyle(.plain)
-            .disabled(true)
-            .accessibilityHint("More spaces are still growing")
-            .padding(.bottom, 3)
+            Spacer(minLength: 4)
         }
     }
 

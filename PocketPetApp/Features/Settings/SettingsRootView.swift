@@ -162,7 +162,7 @@ private struct SettingsMainView: View {
                     }
 
                     VStack(spacing: 7) {
-                        Text("Pocket Pet 0.1 (1)")
+                        Text(appVersionLabel)
                             .font(.system(.body, design: .rounded, weight: .semibold))
                             .foregroundStyle(PocketPetColors.evergreen)
                         Text("Made for small, gentle moments.")
@@ -236,6 +236,13 @@ private struct SettingsMainView: View {
                     : Set([.fraction(0.58)])
             )
         }
+    }
+
+    private var appVersionLabel: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "—"
+        let build = info?["CFBundleVersion"] as? String ?? "—"
+        return "Pocket Pet \(version) (\(build))"
     }
 
     private func openReminderFlow() {

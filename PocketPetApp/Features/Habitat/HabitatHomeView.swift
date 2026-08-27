@@ -37,6 +37,15 @@ struct HabitatHomeView: View {
             header
                 .padding(.horizontal, 16)
 
+            RoomRibbon(
+                currentRoom: .sunnyPatio,
+                isTransitioning: isRoomTransitionInFlight,
+                onMove: { room in
+                    if room == .pantryNook { onOpenPantry() }
+                }
+            )
+                .padding(.horizontal, 16)
+
             needGrid
                 .padding(.horizontal, 16)
 
@@ -50,15 +59,6 @@ struct HabitatHomeView: View {
                 .clipped()
 
             actionGrid
-                .padding(.horizontal, 16)
-
-            RoomRibbon(
-                currentRoom: .sunnyPatio,
-                isTransitioning: isRoomTransitionInFlight,
-                onMove: { room in
-                    if room == .pantryNook { onOpenPantry() }
-                }
-            )
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
         }

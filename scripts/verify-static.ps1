@@ -374,9 +374,9 @@ try {
     }
     if ([regex]::Matches(
             $projectFile,
-            'CURRENT_PROJECT_VERSION = 2;'
+            'CURRENT_PROJECT_VERSION = 3;'
         ).Count -ne 4) {
-        Fail 'all Pocket Pet 0.2 build configurations must use build 2.'
+        Fail 'all Pocket Pet 0.2 build configurations must use build 3.'
     }
     $uiCaptureTests = Get-Content -Raw (
         'PocketPetApp\PocketPetUITests\PocketPetVisualCaptureTests.swift'
