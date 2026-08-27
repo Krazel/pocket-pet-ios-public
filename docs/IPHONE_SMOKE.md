@@ -1,6 +1,6 @@
-# Pocket Pet 0.1 — iPhone smoke
+# Pocket Pet 0.2 — iPhone smoke
 
-Use `PocketPet-0.1-build-1-iOS16-unsigned.ipa` and let Sideloadly sign it
+Use `PocketPet-0.2-build-1-iOS16-unsigned.ipa` and let Sideloadly sign it
 locally. This is a short
 owner test, not a request to explore every screen. Keep the same Apple ID and
 bundle ID when reinstalling so the local app container can be updated in place.
@@ -9,10 +9,10 @@ Do not delete the app while progress matters.
 Record before starting:
 
 - iPhone model and iOS version;
-- Pocket Pet version `0.1 (1)`;
+- Pocket Pet version `0.2 (1)`;
 - minimum supported system iOS `16.4`;
 - IPA SHA-256
-  `70a6f35b04bd6cc6a0f23393a471e1c41d46e82eeec3472723734a5e5571b658`;
+  `8bc5090112330387a8a3bd8dcd96ff6882396fc294755708e0f1e3483c8ac927`;
 - test date and whether Reduce Motion or VoiceOver was already enabled.
 
 ## Five-minute core pass
@@ -32,6 +32,13 @@ Record before starting:
 5. Open Settings. Toggle **Sound** and **Reduce Motion**, return Home and confirm
    the app remains responsive. With Reduce Motion on, the creature may change
    expression but must not use decorative travel, hopping or particles.
+6. From Home, swipe left to open **Pantry Nook**. Select **Dewberry**, **Seed
+   Biscuit**, and **Moss Melon** in turn, then offer one item. Confirm the hand
+   animation and creature response occur once, the selected quantity drops by
+   one, and the new state survives a force-close and reopen.
+7. Use the room ribbon to return to **Home**, then open **Pantry** again. Home
+   care remains free and available; Pantry inventory and Sun Seeds remain
+   unchanged except for the single item offered.
 
 ## Reminder and system pass
 
@@ -70,6 +77,8 @@ record them separately rather than blocking the five-minute core pass.
 | Interrupted hatching recovery | Pending | |
 | Five care actions | Pending | |
 | Background/persistence | Pending | |
+| Pantry selection, offer and persistence | Pending | |
+| Home–Pantry navigation | Pending | |
 | Local Reduce Motion | Pending | |
 | Reminder permission and reconciliation | Pending | |
 | Largest text size | Pending | |
