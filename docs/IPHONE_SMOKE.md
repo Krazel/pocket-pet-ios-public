@@ -1,6 +1,6 @@
 # Pocket Pet 0.2 — iPhone smoke
 
-Use `PocketPet-0.2-build-1-iOS16-unsigned.ipa` and let Sideloadly sign it
+Use `PocketPet-0.2-build-2-iOS16-unsigned.ipa` and let Sideloadly sign it
 locally. This is a short
 owner test, not a request to explore every screen. Keep the same Apple ID and
 bundle ID when reinstalling so the local app container can be updated in place.
@@ -9,10 +9,10 @@ Do not delete the app while progress matters.
 Record before starting:
 
 - iPhone model and iOS version;
-- Pocket Pet version `0.2 (1)`;
+- Pocket Pet version `0.2 (2)`;
 - minimum supported system iOS `16.4`;
 - IPA SHA-256
-  `8bc5090112330387a8a3bd8dcd96ff6882396fc294755708e0f1e3483c8ac927`;
+  `d39f373631e395f9333449b4266a4d1ad0f7736914a0f6b473ac8947261d9863`;
 - test date and whether Reduce Motion or VoiceOver was already enabled.
 
 ## Five-minute core pass
