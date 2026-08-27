@@ -355,8 +355,8 @@ try {
     $pantryAssets = @(
         Get-ChildItem 'PocketPetApp\Resources\Artwork\Pantry' -Filter '*.png'
     )
-    if ($pantryAssets.Count -ne 18) {
-        Fail "Pantry has $($pantryAssets.Count) runtime PNGs; expected 18."
+    if ($pantryAssets.Count -ne 19) {
+        Fail "Pantry has $($pantryAssets.Count) runtime PNGs; expected 19."
     }
     $projectFile = Get-Content -Raw (
         'PocketPetApp\PocketPetApp.xcodeproj\project.pbxproj'

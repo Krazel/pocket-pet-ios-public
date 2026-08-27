@@ -31,8 +31,34 @@ struct PantryNookView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(alignment: .bottom) {
+                pantryFooter(width: proxy.size.width)
+            }
             .background(PocketPetColors.cream.ignoresSafeArea())
         }
+    }
+
+    private func pantryFooter(width: CGFloat) -> some View {
+        ZStack(alignment: .bottom) {
+            LinearGradient(
+                colors: [
+                    PocketPetColors.mint.opacity(0),
+                    PocketPetColors.mint.opacity(0.78),
+                    PocketPetColors.mutedEvergreen.opacity(0.48)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            PocketPetArtwork("pantry_footer_foliage")
+                .resizable()
+                .scaledToFill()
+                .frame(width: width, height: 132, alignment: .bottom)
+                .clipped()
+        }
+        .frame(width: width, height: 132, alignment: .bottom)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+        .ignoresSafeArea(edges: .bottom)
     }
 
     private func content(sceneHeight: CGFloat) -> some View {

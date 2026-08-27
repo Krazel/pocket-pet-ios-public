@@ -73,6 +73,7 @@
 		010000000000000000000044 /* icon_room_wash.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000045 /* icon_room_wash.png */; };
 		010000000000000000000045 /* pantry_offer_hand.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000046 /* pantry_offer_hand.png */; };
 		010000000000000000000046 /* pantry_wall_window_base.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000047 /* pantry_wall_window_base.png */; };
+		010000000000000000000047 /* pantry_footer_foliage.png in Resources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000048 /* pantry_footer_foliage.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -153,6 +154,7 @@
 		020000000000000000000045 /* icon_room_wash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_room_wash.png; sourceTree = "<group>"; };
 		020000000000000000000046 /* pantry_offer_hand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pantry_offer_hand.png; sourceTree = "<group>"; };
 		020000000000000000000047 /* pantry_wall_window_base.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pantry_wall_window_base.png; sourceTree = "<group>"; };
+		020000000000000000000048 /* pantry_footer_foliage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pantry_footer_foliage.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -386,6 +388,7 @@
 				020000000000000000000045 /* icon_room_wash.png */,
 				020000000000000000000046 /* pantry_offer_hand.png */,
 				020000000000000000000047 /* pantry_wall_window_base.png */,
+				020000000000000000000048 /* pantry_footer_foliage.png */,
 			);
 			path = Pantry;
 			sourceTree = "<group>";
@@ -537,6 +540,7 @@
 				010000000000000000000044 /* icon_room_wash.png in Resources */,
 				010000000000000000000045 /* pantry_offer_hand.png in Resources */,
 				010000000000000000000046 /* pantry_wall_window_base.png in Resources */,
+				010000000000000000000047 /* pantry_footer_foliage.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
