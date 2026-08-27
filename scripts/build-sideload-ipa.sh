@@ -40,8 +40,8 @@ if [[ "$minimum_os" != "16.4" ]]; then
 fi
 app_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_path/Info.plist")"
 build_number="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app_path/Info.plist")"
-if [[ "$app_version" != "0.2" || "$build_number" != "1" ]]; then
-  printf 'Expected Pocket Pet 0.2 (1), found %s (%s)\n' "$app_version" "$build_number" >&2
+if [[ "$app_version" != "0.2" || "$build_number" != "2" ]]; then
+  printf 'Expected Pocket Pet 0.2 (2), found %s (%s)\n' "$app_version" "$build_number" >&2
   exit 1
 fi
 

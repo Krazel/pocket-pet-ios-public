@@ -5,6 +5,7 @@ struct HabitatHomeView: View {
     let state: HabitatViewState
     let prefersReducedMotion: Bool
     let isCareInFlight: Bool
+    let isRoomTransitionInFlight: Bool
     let onCare: (CareAction) -> Void
     let onPet: () -> Void
     let onOpenSettings: () -> Void
@@ -16,7 +17,7 @@ struct HabitatHomeView: View {
         GeometryReader { proxy in
             let availableHeight = proxy.size.height
             let shouldScroll = dynamicTypeSize.isAccessibilitySize || availableHeight < 700
-            let habitatHeight = max(360, min(490, availableHeight - 280))
+            let habitatHeight = max(320, min(450, availableHeight - 360))
             Group {
                 if shouldScroll {
                     ScrollView {
@@ -49,6 +50,15 @@ struct HabitatHomeView: View {
                 .clipped()
 
             actionGrid
+                .padding(.horizontal, 16)
+
+            RoomRibbon(
+                currentRoom: .sunnyPatio,
+                isTransitioning: isRoomTransitionInFlight,
+                onMove: { room in
+                    if room == .pantryNook { onOpenPantry() }
+                }
+            )
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
         }

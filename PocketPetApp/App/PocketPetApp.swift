@@ -61,6 +61,7 @@ struct PocketPetApp: App {
                             state: habitatState,
                             prefersReducedMotion: model.prefersReducedMotion,
                             isCareInFlight: model.isCareInFlight,
+                            isRoomTransitionInFlight: model.isRoomTransitionInFlight,
                             onCare: model.perform,
                             onPet: model.petCreature,
                             onOpenSettings: model.openSettings,

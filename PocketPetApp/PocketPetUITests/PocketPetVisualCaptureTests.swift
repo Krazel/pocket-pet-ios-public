@@ -866,6 +866,20 @@ final class PocketPetNormalMotionTimingTests: PocketPetRuntimeQATestCase {
 /// comparator remains stable while Pantry receives its first human-reviewed
 /// equal-size capture.
 final class PocketPetPantryCaptureTests: PocketPetRuntimeQATestCase {
+    func testP00HomeExposesPantryRoom() {
+        launch(scenario: "child-comfortable")
+        require(app.staticTexts["Pip's Habitat"])
+        let pantry = app.buttons["Pantry"]
+        require(pantry)
+        settle(0.5)
+        attachScreen("P00-home-visible-room-ribbon")
+        pantry.tap()
+        require(app.staticTexts["Pantry Nook"])
+        settle(0.5)
+        attachScreen("P00-home-to-pantry-result")
+        attachHierarchy("P00-home-to-pantry-semantics")
+    }
+
     func testP01ApprovedReferenceState() {
         launch(scenario: "pantry")
         require(app.staticTexts["Pantry Nook"])
